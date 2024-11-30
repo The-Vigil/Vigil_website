@@ -1,32 +1,111 @@
 import React from 'react';
 import { Shield, ArrowRight, Lock, Clock, DollarSign } from 'lucide-react';
 
-const Button = ({ children, className, variant }) => {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'outline';
+  className?: string;
+}
+
+const Button: React.FC<ButtonProps> = ({ 
+  children, 
+  className = '', 
+  variant = 'primary', 
+  ...props 
+}) => {
   const baseClasses = "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background";
   const variantClasses = variant === "outline" 
     ? "border border-input hover:bg-accent hover:text-accent-foreground" 
     : "bg-blue-500 hover:bg-blue-600 text-white";
   
   return (
-    <button className={`${baseClasses} ${variantClasses} ${className || ''}`}>
+    <button 
+      className={`${baseClasses} ${variantClasses} ${className}`} 
+      {...props}
+    >
       {children}
     </button>
   );
 };
 
-const Card = ({ children, className }) => (
-  <div className={`rounded-lg border border-slate-800 bg-card text-card-foreground shadow-sm ${className || ''}`}>
+interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const Card: React.FC<CardProps> = ({ children, className = '' }) => (
+  <div className={`rounded-lg border border-slate-800 bg-card text-card-foreground shadow-sm ${className}`}>
     {children}
   </div>
 );
 
-const CardContent = ({ children, className }) => (
-  <div className={`p-6 ${className || ''}`}>
+const CardContent: React.FC<CardProps> = ({ children, className = '' }) => (
+  <div className={`p-6 ${className}`}>
     {children}
   </div>
 );
 
-const LandingPage = () => {
+interface StatsCardProps {
+  icon: React.ReactElement;
+  number: string;
+  label: string;
+}
+
+interface ProblemSolutionCardProps {
+  title: string;
+  description: string;
+  number?: string;
+}
+
+interface BenefitItemProps {
+  text: string;
+}
+
+interface ContactButtonProps {
+  text: string;
+}
+
+const StatsCard: React.FC<StatsCardProps> = ({ icon, number, label }) => (
+  <Card className="bg-slate-900/50 border-slate-800">
+    <CardContent className="p-6 text-center">
+      <div className="flex justify-center mb-4">{icon}</div>
+      <div className="text-3xl font-bold text-white mb-1">{number}</div>
+      <div className="text-slate-400">{label}</div>
+    </CardContent>
+  </Card>
+);
+
+const ProblemCard: React.FC<ProblemSolutionCardProps> = ({ title, description }) => (
+  <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+    <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+    <p className="text-slate-400">{description}</p>
+  </div>
+);
+
+const SolutionCard: React.FC<ProblemSolutionCardProps> = ({ number, title, description }) => (
+  <div className="bg-blue-950/50 border border-blue-900 rounded-xl p-6">
+    <div className="text-blue-400 font-mono mb-2">{number}</div>
+    <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+    <p className="text-slate-400">{description}</p>
+  </div>
+);
+
+const BenefitItem: React.FC<BenefitItemProps> = ({ text }) => (
+  <div className="flex items-center space-x-2">
+    <Shield className="w-5 h-5 text-blue-400" />
+    <span className="text-slate-300">{text}</span>
+  </div>
+);
+
+const ContactButton: React.FC<ContactButtonProps> = ({ text }) => (
+  <Button 
+    variant="outline" 
+    className="py-3 px-6 border-slate-800 text-slate-400"
+  >
+    {text}
+  </Button>
+);
+
+const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-black">
       {/* Navbar */}
@@ -70,7 +149,7 @@ const LandingPage = () => {
 
             {/* Subheadline */}
             <p className="text-xl md:text-2xl text-slate-400 mb-8 max-w-3xl mx-auto">
-              Don't wait for squatters to claim your property. 
+              Dont wait for squatters to claim your property. 
               Our digital passport system stops illegal occupancy instantly.
             </p>
 
@@ -172,7 +251,7 @@ const LandingPage = () => {
                 Secure Your Property Now
               </h2>
               <p className="text-slate-400 text-lg mb-8">
-                Join NYC's first digital protection system against illegal occupancy
+                Join NYCs first digital protection system against illegal occupancy
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <BenefitItem text="Priority Access to Protection" />
@@ -204,47 +283,5 @@ const LandingPage = () => {
     </div>
   );
 };
-
-// Utility Components
-const StatsCard = ({ icon, number, label }) => (
-  <Card className="bg-slate-900/50 border-slate-800">
-    <CardContent className="p-6 text-center">
-      <div className="flex justify-center mb-4">{icon}</div>
-      <div className="text-3xl font-bold text-white mb-1">{number}</div>
-      <div className="text-slate-400">{label}</div>
-    </CardContent>
-  </Card>
-);
-
-const ProblemCard = ({ title, description }) => (
-  <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-    <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
-    <p className="text-slate-400">{description}</p>
-  </div>
-);
-
-const SolutionCard = ({ number, title, description }) => (
-  <div className="bg-blue-950/50 border border-blue-900 rounded-xl p-6">
-    <div className="text-blue-400 font-mono mb-2">{number}</div>
-    <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
-    <p className="text-slate-400">{description}</p>
-  </div>
-);
-
-const BenefitItem = ({ text }) => (
-  <div className="flex items-center space-x-2">
-    <Shield className="w-5 h-5 text-blue-400" />
-    <span className="text-slate-300">{text}</span>
-  </div>
-);
-
-const ContactButton = ({ text }) => (
-  <Button 
-    variant="outline" 
-    className="py-3 px-6 border-slate-800 text-slate-400"
-  >
-    {text}
-  </Button>
-);
 
 export default LandingPage;
