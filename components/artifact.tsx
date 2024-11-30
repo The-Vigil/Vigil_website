@@ -115,9 +115,11 @@ const LandingPage: React.FC = () => {
             <Shield className="w-8 h-8 text-blue-500" />
             <span className="text-2xl font-bold text-white">VIGIL</span>
           </div>
+          <a href="#contact">
           <Button className="px-6 py-2">
             Contact Us
           </Button>
+          </a>
         </div>
       </nav>
 
@@ -142,24 +144,24 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Prevent Illegal Occupancy
-              <span className="block text-blue-400">Before It Happens</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Protect your Property
+              <span className="block text-blue-400">In Seconds</span>
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl md:text-2xl text-slate-400 mb-8 max-w-3xl mx-auto">
-              Dont wait for squatters to claim your property. 
-              Our digital passport system stops illegal occupancy instantly.
+            <p className="text-xl md:text-xl text-slate-400 mb-8 max-w-3xl mx-auto">
+              Transform a 6-month legal battle into 60 second verification. 
+              Secure Your Property Ownership Digitally.
             </p>
 
             {/* Emergency Stats */}
-            <div className="mb-12 text-red-400 text-lg">
+            {/* <div className="mb-12 text-red-400 text-lg">
               <span className="font-semibold">NYC Alert:</span> Property owners lose $50,000+ and 6+ months fighting squatters
-            </div>
+            </div> */}
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
+            {/* <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
               <Button className="py-4 px-8 text-lg rounded-xl">
                 Protect Your Property Now
                 <ArrowRight className="ml-2 w-5 h-5" />
@@ -170,7 +172,22 @@ const LandingPage: React.FC = () => {
               >
                 Contact Us
               </Button>
+            </div> */}
+            
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
+            <a href="#contact">
+            <Button className="py-2 px-4 text-sm rounded-lg">
+              Protect Your Property Now
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+            </a>
+            <a href="#contact">
+            <Button variant="outline"className="py-2 px-4 text-sm border-blue-500/50 text-blue-400 rounded-lg">
+               Contact Us
+            </Button>
+            </a>
             </div>
+            
 
             {/* Key Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -243,7 +260,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Launch Info Section */}
-      <section className="py-20 bg-black">
+      {/* <section className="py-20 bg-black">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <Card className="bg-gradient-to-b from-blue-950 to-slate-900 border-blue-500/20">
             <CardContent className="p-12">
@@ -266,10 +283,10 @@ const LandingPage: React.FC = () => {
             </CardContent>
           </Card>
         </div>
-      </section>
+      </section> */}
 
       {/* Contact Section */}
-      <section className="py-20 bg-black border-t border-white/10">
+      {/* <section className="py-20 bg-black border-t border-white/10">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold text-white mb-8">
             Protect Your Property Today
@@ -277,6 +294,65 @@ const LandingPage: React.FC = () => {
           <div className="flex justify-center space-x-6">
             <ContactButton text="info@vigil.security" />
             <ContactButton text="(555) 123-4567" />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default LandingPage; */}
+      <section className="bg-gradient-to-b from-black to-slate-900 py-24">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="rounded-2xl bg-gradient-to-b from-blue-950 to-slate-900 border border-blue-500/20 p-12 text-center">
+            {/* Early Access Counter */}
+            <div className="inline-block mb-8">
+              <div className="px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                <span className="font-mono">250</span> Early Access Spots Available
+              </div>
+            </div>
+            
+            {/* Main Title */}
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Join the Founding Members List
+            </h2>
+            
+            {/* Description */}
+            <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto">
+              Be among the first in NYC to secure your property with next-gen digital protection
+            </p>
+            
+            {/* Benefits Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              <BenefitItem text="Lifetime Founding Member Status" />
+              <BenefitItem text="40% Off Launch Pricing" />
+              <BenefitItem text="Priority Support Access" />
+              <BenefitItem text="Early Access to Features" />
+            </div>
+            
+            {/* CTA Button */}
+            <Button className="py-4 px-8 text-lg rounded-xl mb-4">
+              Secure Your Spot Now
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            
+            {/* Limited Spots Reminder */}
+            <p className="text-sm text-slate-500">
+              Limited to first 250 property owners in NYC
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section remains exactly the same */}
+      <section id="contact" className="py-20 bg-black border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <h2 className="text-2xl font-bold text-white mb-8">
+            Protect Your Property Today
+          </h2>
+          <div className="flex justify-center space-x-6">
+            <ContactButton text="Contact@thevigil.ai" />
+            <ContactButton text="+1(917) 238-4177" />
           </div>
         </div>
       </section>
