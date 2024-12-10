@@ -35,7 +35,8 @@ const VigilForm = () => {
     }
 
     if (name === "phone") {
-      const phoneRegex = /^(212|646|917|718|347|929|917|312|773|872)\d{7}$/; // Starts with NYC or Chicago area codes
+     const phoneRegex = /^(\+1|1)?[-.\s]?(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$/;
+ // Starts with NYC or Chicago area codes
       setErrors((prev) => ({
         ...prev,
         phone: phoneRegex.test(value.replace(/\D/g, ""))
