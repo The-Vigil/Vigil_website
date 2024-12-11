@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Shield } from 'lucide-react';
 
 const VigilForm = () => {
   const [formData, setFormData] = useState({
@@ -74,6 +75,17 @@ Additional Comments: ${formData.comments || "None"}
   return (
     <div className="min-h-screen bg-black text-gray-100">
       <div className="max-w-2xl mx-auto p-6">
+      <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Shield className="w-8 h-8 text-blue-500" />
+            <h1 className="text-3xl font-bold text-white">VIGIL</h1>
+          </div>
+          <div className="bg-blue-900/20 text-blue-400 py-2 px-4 rounded-full inline-block mb-6">
+            250 Early Access Spots Available
+          </div>
+          <h2 className="text-2xl font-semibold mb-2 text-white">Protect Your Property</h2>
+          <p className="text-gray-400">Transform a 6-month legal battle into 60 second verification</p>
+        </div>
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-300">Full Name</label>
