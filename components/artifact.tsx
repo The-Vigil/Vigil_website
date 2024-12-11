@@ -216,10 +216,10 @@ const LandingPage: React.FC = () => {
             </p>
 
             {/* Emergency Stats */}
-            <div className="mb-12 text-red-400 text-lg">
+            {/* <div className="mb-12 text-red-400 text-lg">
               <span className="font-semibold">NYC Alert:</span> Property owners
               lose $50,000+ and 6+ months fighting squatters
-            </div>
+            </div> */}
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
@@ -367,11 +367,11 @@ const LandingPage: React.FC = () => {
           </Link>
           <div className="flex justify-center space-x-6">
             <ContactButton
-              text="Contact: demo@vigil.com"
+              text="Contact: Contact@thevigil.ai"
               href="https://mail.google.com/mail/?view=cm&fs=1&to=demo@vigil.com"
             />
             <ContactButton
-              text="(555) 123-4567"
+              text="+1 (917) 238-4177"
               onClick={() => alert("Redirecting to protect property rights!")}
             />
           </div>
