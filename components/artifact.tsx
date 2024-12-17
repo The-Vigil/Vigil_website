@@ -223,16 +223,16 @@ const LandingPage: React.FC = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-              <Button className="py-4 px-8 text-lg rounded-xl">
-                Protect Your Property Now
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Link
-                href="/book"
-                className="py-4 px-8 text-lg border border-blue-500/50 text-blue-400 rounded-xl hover:bg-blue-500 hover:text-white transition"
-              >
-                Contact Us
-              </Link>
+            
+            <Link href="/book" >
+                  <Button className="py-4 px-8 text-lg rounded-xl flex items-center">
+                  Protect Your Property Now
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+             
+    
+              
             </div>
 
             {/* Key Stats */}
@@ -254,7 +254,7 @@ const LandingPage: React.FC = () => {
               />
               <StatsCard
                 icon={<ShieldCheck className="w-6 h-6 text-blue-400" />}
-                number="95%"
+                number="24/7"
                 label=" Law enforcement integration"
               />
             </div>
