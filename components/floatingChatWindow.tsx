@@ -6,6 +6,16 @@ interface Message {
   text: string;
 }
 
+interface RunPodResponse {
+  id: string;
+  output?: {
+    user_input?: { text: string };
+    assistant_response?: { text: string; audio?: string };
+  };
+  status: 'COMPLETED' | 'FAILED' | 'PENDING';
+  error?: string;
+}
+
 const FloatingChatWindow: FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -15,22 +25,23 @@ const FloatingChatWindow: FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-//   const RUNPOD_API_KEY: string | undefined = process.env.REACT_APP_RUNPOD_API_KEY;
-//   const ENDPOINT_ID: string | undefined = process.env.REACT_APP_ENDPOINT_ID;
-  const  RUNPOD_API_KEY="rpa_FPNCUWFPY14G8PANB49TVYLJX4NAEAZGMU5PQGZ81ssmlf"
-  const ENDPOINT_ID="y4vntzd46qr3lm"
-  console.log("RUNPOD_API_KEY ",RUNPOD_API_KEY)
+
+  const RUNPOD_API_KEY = process.env.NEXT_PUBLIC_RUNPOD_API_KEY;
+  const ENDPOINT_ID = process.env.NEXT_PUBLIC_ENDPOINT_ID;
+
+  console.log(RUNPOD_API_KEY);
+  
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setMessages([
         {
           type: 'assistant',
-          text: "Hi! I'm AEGIS Vigil's AI Property Protection Consultant AI assistant. How can I help you today?",
-        }
+          text: 'Hi! I&#39;m AEGIS Vigil&#39;s AI Property Protection Consultant AI assistant. How can I help you today?',
+        },
       ]);
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -38,16 +49,16 @@ const FloatingChatWindow: FC = () => {
 
   const startRecording = async (): Promise<void> => {
     try {
-      const stream: MediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder: MediaRecorder = new MediaRecorder(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
       const audioChunks: Blob[] = [];
 
-      mediaRecorder.ondataavailable = (event: BlobEvent) => {
+      mediaRecorder.ondataavailable = (event) => {
         audioChunks.push(event.data);
       };
 
       mediaRecorder.onstop = async () => {
-        const audioBlob: Blob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
         await processAudioInput(audioBlob);
       };
 
@@ -56,10 +67,13 @@ const FloatingChatWindow: FC = () => {
       setIsRecording(true);
     } catch (error) {
       console.error('Error accessing microphone:', error);
-      setMessages(prev => [...prev, {
-        type: 'error',
-        text: 'Error accessing microphone. Please ensure microphone permissions are enabled.'
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: 'error',
+          text: 'Error accessing microphone. Please ensure microphone permissions are enabled.',
+        },
+      ]);
     }
   };
 
@@ -67,15 +81,15 @@ const FloatingChatWindow: FC = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
     }
   };
 
   const blobToBase64 = (blob: Blob): Promise<string> => {
     return new Promise((resolve, reject) => {
-      const reader: FileReader = new FileReader();
+      const reader = new FileReader();
       reader.onloadend = () => {
-        const base64String: string = (reader.result as string)
+        const base64String = (reader.result as string)
           .replace('data:audio/wav;base64,', '')
           .replace('data:audio/webm;base64,', '');
         resolve(base64String);
@@ -83,11 +97,11 @@ const FloatingChatWindow: FC = () => {
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
-  };  
+  };
 
   const base64ToBlob = (base64: string): Blob => {
-    const binaryString: string = window.atob(base64);
-    const bytes: Uint8Array = new Uint8Array(binaryString.length);
+    const binaryString = window.atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
@@ -97,68 +111,84 @@ const FloatingChatWindow: FC = () => {
   const processAudioInput = async (blob: Blob): Promise<void> => {
     setIsLoading(true);
     try {
-      const base64Audio: string = await blobToBase64(blob);
-      
-      setMessages(prev => [...prev, {
-        type: 'system',
-        text: "Processing your voice message..."
-      }]);
+      const base64Audio = await blobToBase64(blob);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: 'system',
+          text: 'Processing your voice message...',
+        },
+      ]);
 
       const response = await callRunPodEndpoint({
         type: 'audio',
-        audio: base64Audio
+        audio: base64Audio,
       });
 
-      setMessages(prev => prev.filter(msg => msg.text !== "Processing your voice message..."));
+      setMessages((prev) => prev.filter((msg) => msg.text !== 'Processing your voice message...'));
 
       if (response?.output?.user_input?.text) {
-        setMessages(prev => [...prev, {
-          type: 'user',
-          text: response.output.user_input.text
-        }]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: 'user',
+            text: response.output?.user_input?.text || '',
+          },
+        ]);
       }
 
       if (response?.output?.assistant_response) {
-        setMessages(prev => [...prev, {
-          type: 'assistant',
-          text: response.output.assistant_response.text
-        }]);
+       setMessages((prev) => [
+    ...prev,
+    {
+      type: 'assistant',
+      text: response?.output?.assistant_response?.text || '',
+    },
+  ]);
 
         if (response.output.assistant_response.audio) {
-          const audioData: Blob = base64ToBlob(response.output.assistant_response.audio);
-          const audioUrl: string = URL.createObjectURL(audioData);
-          const audio: HTMLAudioElement = new Audio(audioUrl);
+          const audioData = base64ToBlob(response.output.assistant_response.audio);
+          const audioUrl = URL.createObjectURL(audioData);
+          const audio = new Audio(audioUrl);
           await audio.play();
           URL.revokeObjectURL(audioUrl);
         }
       }
     } catch (error) {
       console.error('Error processing audio:', error);
-      setMessages(prev => prev.filter(msg => msg.text !== "Processing your voice message..."));
-      setMessages(prev => [...prev, {
-        type: 'error',
-        text: 'Sorry, there was an error processing your audio.'
-      }]);
+      setMessages((prev) =>
+        prev.filter((msg) => msg.text !== 'Processing your voice message...')
+      );
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: 'error',
+          text: 'Sorry, there was an error processing your audio.',
+        },
+      ]);
     }
     setIsLoading(false);
   };
 
-  const callRunPodEndpoint = async (payload: any): Promise<any> => {
+  const callRunPodEndpoint = async (
+    payload: Record<string, unknown>
+  ): Promise<RunPodResponse> => {
     try {
-      const response: Response = await fetch(`https://api.runpod.ai/v2/${ENDPOINT_ID}/run`, {
+      const response = await fetch(`https://api.runpod.ai/v2/${ENDPOINT_ID}/run`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${RUNPOD_API_KEY}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${RUNPOD_API_KEY}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ input: payload })
+        body: JSON.stringify({ input: payload }),
       });
 
       if (!response.ok) {
         throw new Error(`API request failed with status ${response.status}`);
       }
 
-      const data: any = await response.json();
+      const data = await response.json();
       return await pollForCompletion(data.id);
     } catch (error) {
       console.error('Error calling RunPod:', error);
@@ -166,86 +196,92 @@ const FloatingChatWindow: FC = () => {
     }
   };
 
-  const pollForCompletion = async (jobId: string): Promise<any> => {
-    const maxAttempts: number = 30;
-    const delayMs: number = 1000;
-    
+  const pollForCompletion = async (jobId: string): Promise<RunPodResponse> => {
+    const maxAttempts = 30;
+    const delayMs = 1000;
+
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        const response: Response = await fetch(
+        const response = await fetch(
           `https://api.runpod.ai/v2/${ENDPOINT_ID}/status/${jobId}`,
           {
             headers: {
-              'Authorization': `Bearer ${RUNPOD_API_KEY}`
-            }
+              Authorization: `Bearer ${RUNPOD_API_KEY}`,
+            },
           }
         );
-        
+
         if (!response.ok) {
           throw new Error(`Status check failed with status ${response.status}`);
         }
-        
-        const data: any = await response.json();
-        
+
+        const data = await response.json();
+
         if (data.status === 'COMPLETED') {
           return data;
         } else if (data.status === 'FAILED') {
           throw new Error(data.error);
         }
-        
-        await new Promise(resolve => setTimeout(resolve, delayMs));
+
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
       } catch (error) {
         console.error(`Error in poll attempt ${attempt + 1}:`, error);
         throw error;
       }
     }
-    
+
     throw new Error('Job timed out');
   };
 
   const handleSendMessage = async (): Promise<void> => {
     if (!inputText.trim()) return;
 
-    const userMessage: string = inputText.trim();
+    const userMessage = inputText.trim();
     setInputText('');
-    setMessages(prev => [...prev, { type: 'user', text: userMessage }]);
+    setMessages((prev) => [...prev, { type: 'user', text: userMessage }]);
     setIsLoading(true);
 
     try {
       const response = await callRunPodEndpoint({
         type: 'text',
-        text: userMessage
+        text: userMessage,
       });
 
       if (response?.output?.assistant_response) {
-        setMessages(prev => [...prev, {
-          type: 'assistant',
-          text: response.output.assistant_response.text
-        }]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: 'assistant',
+            text: response?.output?.assistant_response?.text || '',
+          },
+        ]);
 
         if (response.output.assistant_response.audio) {
-          const audioData: Blob = base64ToBlob(response.output.assistant_response.audio);
-          const audioUrl: string = URL.createObjectURL(audioData);
-          const audio: HTMLAudioElement = new Audio(audioUrl);
+          const audioData = base64ToBlob(response.output.assistant_response.audio);
+          const audioUrl = URL.createObjectURL(audioData);
+          const audio = new Audio(audioUrl);
           await audio.play();
           URL.revokeObjectURL(audioUrl);
         }
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessages(prev => [...prev, {
-        type: 'error',
-        text: 'Sorry, there was an error processing your message.'
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: 'error',
+          text: 'Sorry, there was an error processing your message.',
+        },
+      ]);
     }
     setIsLoading(false);
   };
 
-  const predefinedQuestions: string[] = [
-    "Tell me about Vigil's digital verification system ",
-    "What is Vigil's core service offering?",
-    "What should I do if there is an immediate threat to my property?"
-  ];
+  // const predefinedQuestions: string[] = [
+  //   "Tell me about Vigil's digital verification system ",
+  //   "What is Vigil's core service offering?",
+  //   "What should I do if there is an immediate threat to my property?"
+  // ];
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -257,7 +293,7 @@ const FloatingChatWindow: FC = () => {
             <div className="bg-gradient-to-r from-[#24283b] to-[#1a1b26] text-white p-4 rounded-t-lg flex justify-between items-center border-b border-[#414868]">
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                <h3 className="font-semibold">Chat with  AEGIS  Vigil's AI Assistant</h3>
+                <h3 className="font-semibold">Chat with  AEGIS  Vigil&#39;s AI Assistant</h3>
               </div>
               <button 
                 onClick={() => setIsOpen(false)} 
@@ -356,52 +392,5 @@ const FloatingChatWindow: FC = () => {
     </div>
   );
 };
-
-const styles = `
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  .animate-slideUp {
-    animation: slideUp 0.3s ease-out;
-  }
-
-  .animate-fadeIn {
-    animation: fadeIn 0.3s ease-out;
-  }
-
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-
-  .scrollbar-thumb-[#414868]::-webkit-scrollbar-thumb {
-    background-color: #414868;
-    border-radius: 9999px;
-  }
-
-  .scrollbar-track-[#1a1b26]::-webkit-scrollbar-track {
-    background-color: #1a1b26;
-  }
-
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-`;
 
 export default FloatingChatWindow;
