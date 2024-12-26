@@ -37,7 +37,7 @@ const FloatingChatWindow: FC = () => {
       setMessages([
         {
           type: 'assistant',
-          text: 'Hi! I&#39;m AEGIS Vigil&#39;s AI Property Protection Consultant AI assistant. How can I help you today?',
+          text: "Hi! I'm AEGIS Vigil's AI Property Protection Consultant AI assistant. How can I help you today?",
         },
       ]);
     }
