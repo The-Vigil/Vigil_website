@@ -9,6 +9,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
+import FloatingChatWindow from "./floatingChatWindow";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "outline";
@@ -172,12 +173,12 @@ const LandingPage: React.FC = () => {
               Contact Us
             </Link>
             <a
-  href="/Pitch_deck_vigil.pdf"
-  download="Pitch_deck_vigil.pdf" // Explicitly set the file name for download
-  className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
->
-  Pitch Deck
-</a>
+              href="/Pitch_deck_vigil.pdf"
+              download="Pitch_deck_vigil.pdf" // Explicitly set the file name for download
+              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            >
+              Pitch Deck
+            </a>
 
           </div>
         </div>
@@ -223,16 +224,16 @@ const LandingPage: React.FC = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-            
-            <Link href="/book" >
-                  <Button className="py-4 px-8 text-lg rounded-xl flex items-center">
+
+              <Link href="/book" >
+                <Button className="py-4 px-8 text-lg rounded-xl flex items-center">
                   Protect Your Property Now
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </Link>
-             
-    
-              
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+
+
+
             </div>
 
             {/* Key Stats */}
@@ -333,16 +334,16 @@ const LandingPage: React.FC = () => {
                 digital protection
               </p>
               <div className="flex justify-between items-center gap-8 mb-8 text-left">
-  <div className="flex-shrink-0">
-    <BenefitItem text="Lifetime Founding Member Status" />
-  </div>
-  <div className="flex-shrink-0">
-    <BenefitItem text="Priority Support Access" />
-  </div>
-  <div className="flex-shrink-0">
-    <BenefitItem text="Early Access to Features" />
-  </div>
-</div>
+                <div className="flex-shrink-0">
+                  <BenefitItem text="Lifetime Founding Member Status" />
+                </div>
+                <div className="flex-shrink-0">
+                  <BenefitItem text="Priority Support Access" />
+                </div>
+                <div className="flex-shrink-0">
+                  <BenefitItem text="Early Access to Features" />
+                </div>
+              </div>
 
               <div className="flex justify-center">
                 <Link href="/book">
@@ -377,6 +378,7 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+      <FloatingChatWindow/>
     </div>
   );
 };
