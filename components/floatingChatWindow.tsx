@@ -29,7 +29,7 @@ const FloatingChatWindow: FC = () => {
   const RUNPOD_API_KEY = process.env.NEXT_PUBLIC_RUNPOD_API_KEY;
   const ENDPOINT_ID = process.env.NEXT_PUBLIC_ENDPOINT_ID;
 
-  console.log(RUNPOD_API_KEY);
+
   
 
   useEffect(() => {
