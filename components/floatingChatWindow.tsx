@@ -164,7 +164,7 @@ const FloatingChatWindow: FC = () => {
         ...prev,
         {
           type: 'error',
-          text: 'Agent is offline',
+          text: 'Sorry, there was an error processing your audio.',
         },
       ]);
     }
@@ -270,7 +270,7 @@ const FloatingChatWindow: FC = () => {
         ...prev,
         {
           type: 'error',
-          text: 'Sorry, there was an error processing your message.',
+          text: 'Agent is offline',
         },
       ]);
     }
