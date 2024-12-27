@@ -26,8 +26,8 @@ const FloatingChatWindow: FC = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
 
-  const RUNPOD_API_KEY = "rpa_FPNCUWFPY14G8PANB49TVYLJX4NAEAZGMU5PQGZ81ssmlf"//process.env.NEXT_PUBLIC_RUNPOD_API_KEY;
-  const ENDPOINT_ID = "y4vntzd46qr3lm"//process.env.NEXT_PUBLIC_ENDPOINT_ID;
+  const RUNPOD_API_KEY = ""//process.env.NEXT_PUBLIC_RUNPOD_API_KEY;
+  const ENDPOINT_ID = ""//process.env.NEXT_PUBLIC_ENDPOINT_ID;
 
 
   
