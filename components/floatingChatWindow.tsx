@@ -30,8 +30,6 @@ const FloatingChatWindow: FC = () => {
   const ENDPOINT_ID = ""//process.env.NEXT_PUBLIC_ENDPOINT_ID;
 
 
-  
-
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setMessages([
