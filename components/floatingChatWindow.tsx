@@ -26,8 +26,12 @@ const FloatingChatWindow: FC = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
 
-  const RUNPOD_API_KEY = ""//process.env.NEXT_PUBLIC_RUNPOD_API_KEY;
-  const ENDPOINT_ID = ""//process.env.NEXT_PUBLIC_ENDPOINT_ID;
+  const RUNPOD_API_KEY = process.env.NEXT_PUBLIC_RUNPOD_API_KEY;
+  const ENDPOINT_ID = process.env.NEXT_PUBLIC_ENDPOINT_ID;
+
+  console.log(RUNPOD_API_KEY);
+  console.log(ENDPOINT_ID);
+  console.log(process.env.NEXT_PUBLIC_Shahrukh)
 
 
   useEffect(() => {
@@ -268,7 +272,7 @@ const FloatingChatWindow: FC = () => {
         ...prev,
         {
           type: 'error',
-          text: 'Agent is offline',
+          text: 'Sorry, there was an error processing your message.',
         },
       ]);
     }
