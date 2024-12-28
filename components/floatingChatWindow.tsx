@@ -32,6 +32,8 @@ const FloatingChatWindow: FC = () => {
   console.log(RUNPOD_API_KEY);
   console.log(ENDPOINT_ID);
   console.log(process.env.NEXT_PUBLIC_Shahrukh)
+  console.log(process.env);
+
 
 
   useEffect(() => {
