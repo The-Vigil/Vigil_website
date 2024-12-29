@@ -78,10 +78,6 @@ interface BenefitItemProps {
   text: string;
 }
 
-interface ContactButtonProps {
-  text: string;
-}
-
 const StatsCard: React.FC<StatsCardProps> = ({ icon, number, label }) => (
   <Card className="bg-slate-900/50 border-slate-800">
     <CardContent className="p-6 text-center">
@@ -165,24 +161,24 @@ const LandingPage: React.FC = () => {
           </div>
 
           {/* Buttons Section */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center">
             <Link
               href="/book"
-              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              className="w-full sm:w-auto px-6 py-2 bg-blue-500 text-white text-center rounded-lg hover:bg-blue-600 transition"
             >
               Contact Us
             </Link>
             <a
               href="/Pitch_deck_vigil.pdf"
-              download="Pitch_deck_vigil.pdf" // Explicitly set the file name for download
-              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              download="Pitch_deck_vigil.pdf"
+              className="w-full sm:w-auto px-6 py-2 bg-blue-500 text-white text-center rounded-lg hover:bg-blue-600 transition"
             >
               Pitch Deck
             </a>
-
           </div>
         </div>
       </nav>
+
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 relative overflow-hidden">
@@ -212,175 +208,149 @@ const LandingPage: React.FC = () => {
 
             {/* Subheadline */}
             <p className="text-xl md:text-2xl text-slate-400 mb-8 max-w-3xl mx-auto">
-              Tramsform a 6-months legal battle into 60 seconds verification.
+              Transform a 6-month legal battle into 60-second verification.
               Secure Your Property Ownership Digitally.
             </p>
 
-            {/* Emergency Stats */}
-            {/* <div className="mb-12 text-red-400 text-lg">
-              <span className="font-semibold">NYC Alert:</span> Property owners
-              lose $50,000+ and 6+ months fighting squatters
-            </div> */}
-
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-
-              <Link href="/book" >
-                <Button className="py-4 px-8 text-lg rounded-xl flex items-center">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-20">
+              <Link href="/book">
+                <Button className="w-full sm:w-auto py-4 px-8 text-lg rounded-xl flex items-center justify-center">
                   Protect Your Property Now
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-
-
-
+              <a
+                href="/Pitch_deck_vigil.pdf"
+                download="Pitch_deck_vigil.pdf"
+                className="w-full sm:w-auto py-4 px-8 bg-blue-500 text-white text-lg rounded-xl text-center hover:bg-blue-600 transition"
+              >
+                Download Pitch Deck
+              </a>
             </div>
+
 
             {/* Key Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6            ">
               <StatsCard
-                icon={<DollarSign className="w-6 h-6 text-green-400" />}
-                number="$50,000+"
-                label="Legal Costs Prevented"
+                icon={<Lock className="w-12 h-12 text-blue-500" />}
+                number="100%"
+                label="Ownership Secured"
               />
               <StatsCard
-                icon={<Clock className="w-6 h-6 text-blue-400" />}
-                number="60"
-                label="Second Prevention"
+                icon={<Clock className="w-12 h-12 text-blue-500" />}
+                number="60s"
+                label="Verification Time"
               />
               <StatsCard
-                icon={<Lock className="w-6 h-6 text-purple-400" />}
-                number="99%"
-                label="Protection Rate"
+                icon={<DollarSign className="w-12 h-12 text-blue-500" />}
+                number="$0"
+                label="Initial Cost"
               />
               <StatsCard
-                icon={<ShieldCheck className="w-6 h-6 text-blue-400" />}
+                icon={<ShieldCheck className="w-12 h-12 text-blue-500" />}
                 number="24/7"
-                label=" Law enforcement integration"
+                label="Support Availability"
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Problem Solution Section */}
-      <section className="py-20 bg-slate-900">
+      {/* Problem-Solution Section */}
+      <section className="py-16 bg-slate-900">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-            {/* Problem Side */}
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-8">The Threat</h2>
-              <div className="space-y-6">
-                <ProblemCard
-                  number="01"
-                  title="Squatters Strike Fast"
-                  description="Once they're in, removal becomes a legal nightmare"
-                />
-                <ProblemCard
-                  number="02"
-                  title="Fake Documents"
-                  description="Professional squatters use sophisticated counterfeit leases"
-                />
-                <ProblemCard
-                  number="03"
-                  title="Costly Battle"
-                  description="6-8 month legal process while they occupy your property"
-                />
-              </div>
-            </div>
-
-            {/* Solution Side */}
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-8">
-                VIGIL Protection
-              </h2>
-              <div className="space-y-6">
-                <SolutionCard
-                  number="01"
-                  title="Instant Prevention"
-                  description="Police verify ownership before squatters can claim rights"
-                />
-                <SolutionCard
-                  number="02"
-                  title="Digital Shield"
-                  description="Your property's unique verification passport"
-                />
-                <SolutionCard
-                  number="03"
-                  title="Immediate Action"
-                  description="Enable police to act instantly, not months later"
-                />
-              </div>
-            </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              The Problem We Solve
+            </h2>
+            <p className="text-slate-400 mt-4">
+              Understanding the challenges faced by property owners in protecting their assets.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ProblemCard
+              number="01"
+              title="Lengthy Legal Processes"
+              description="Property disputes can take months or even years to resolve through the courts."
+            />
+            <ProblemCard
+              number="02"
+              title="Unauthorized Occupants"
+              description="Squatters or unauthorized tenants can take possession of properties without proper consent."
+            />
           </div>
         </div>
       </section>
 
-      {/* Launch Info Section */}
-      <section className="py-20 bg-black">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <Card className="bg-gradient-to-b from-blue-950 to-slate-900 border-blue-500/20">
-            <CardContent className="p-12">
-              <div className="inline-block mb-6">
-                <div className="px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400">
-                  250 Early Access Spots Available
-                </div>
-              </div>
-              <h2 className="text-3xl font-bold text-white mb-6">
-                Join The Founding Members List
-              </h2>
-              <p className="text-slate-400 text-lg mb-8">
-                Be among the first in NYC to secure your property with next-gen
-                digital protection
-              </p>
-              <div className="flex justify-between items-center gap-8 mb-8 text-left">
-                <div className="flex-shrink-0">
-                  <BenefitItem text="Lifetime Founding Member Status" />
-                </div>
-                <div className="flex-shrink-0">
-                  <BenefitItem text="Priority Support Access" />
-                </div>
-                <div className="flex-shrink-0">
-                  <BenefitItem text="Early Access to Features" />
-                </div>
-              </div>
+      <section className="py-16 bg-blue-950">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              Our Solution
+            </h2>
+            <p className="text-slate-400 mt-4">
+              Leveraging AI to verify property ownership and prevent disputes effortlessly.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <SolutionCard
+              number="01"
+              title="AI-Powered Verification"
+              description="Quickly and accurately verify property ownership using advanced AI technologies."
+            />
+            <SolutionCard
+              number="02"
+              title="Digital Proof"
+              description="Secure your ownership rights with tamper-proof digital documentation."
+            />
+          </div>
+        </div>
+      </section>
 
-              <div className="flex justify-center">
-                <Link href="/book">
-                  <Button className="py-4 px-8 text-lg rounded-xl flex items-center">
-                    Secure Your Spot Now
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Benefits Section */}
+      <section className="py-16 bg-black">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              Why Choose Us?
+            </h2>
+            <p className="text-slate-400 mt-4">
+              Discover the advantages of using our AI-powered property verification service.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <BenefitItem text="Enhanced security for your property." />
+            <BenefitItem text="Seamless and fast verification process." />
+            <BenefitItem text="Reduced legal costs and disputes." />
+          </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section className="py-20 bg-black border-t border-white/10">
+      <section className="py-16 bg-blue-950">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <Link href="/book">
-            <h2 className="text-2xl font-bold text-white mb-8 cursor-pointer">
-              Protect Your Property Today
-            </h2>
-          </Link>
-          <div className="flex justify-center space-x-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            Ready to Secure Your Property?
+          </h2>
+          <p className="text-slate-400 mb-8">
+            Get started today and experience the future of property ownership verification.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <ContactButton text="Contact Us" href="/book" />
             <ContactButton
-              text="Contact: Contact@thevigil.ai"
-              href="https://mail.google.com/mail/?view=cm&fs=1&to=demo@vigil.com"
-            />
-            <ContactButton
-              text="+1 (917) 238-4177"
-              onClick={() => alert("Redirecting to protect property rights!")}
+              text="Learn More"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             />
           </div>
         </div>
       </section>
-      <FloatingChatWindow/>
+
+      {/* Floating Chat */}
+      <FloatingChatWindow />
     </div>
   );
 };
 
 export default LandingPage;
+

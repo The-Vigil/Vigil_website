@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Shield } from 'lucide-react';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const VigilForm = () => {
   const [formData, setFormData] = useState({
@@ -25,19 +27,26 @@ const VigilForm = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Validation
+  
+    // Field-specific validation
+    if (name === "fullName") {
+      const nameRegex = /^[a-zA-Z\s]{2,}$/;
+      setErrors((prev) => ({
+        ...prev,
+        fullName: nameRegex.test(value) ? "" : "Please enter a valid full name.",
+      }));
+    }
+  
     if (name === "email") {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email validation regex
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       setErrors((prev) => ({
         ...prev,
         email: emailRegex.test(value) ? "" : "Please enter a valid email address.",
       }));
     }
-
+  
     if (name === "phone") {
-     const phoneRegex = /^(\+1|1)?[-.\s]?(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$/;
- // Starts with NYC or Chicago area codes
+      const phoneRegex = /^(\+1|1)?[-.\s]?(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$/;
       setErrors((prev) => ({
         ...prev,
         phone: phoneRegex.test(value.replace(/\D/g, ""))
@@ -45,7 +54,29 @@ const VigilForm = () => {
           : "Enter a valid phone number for NYC or Chicago.",
       }));
     }
+  
+    if (name === "address") {
+      setErrors((prev) => ({
+        ...prev,
+        address: value.trim() ? "" : "Please enter a valid address.",
+      }));
+    }
+  
+    if (name === "propertyType") {
+      setErrors((prev) => ({
+        ...prev,
+        propertyType: value ? "" : "Please select a property type.",
+      }));
+    }
+  
+    if (name === "interestLevel") {
+      setErrors((prev) => ({
+        ...prev,
+        interestLevel: value ? "" : "Please select an interest level.",
+      }));
+    }
   };
+  
 
   const generateGmailLink = () => {
     const subject = `Early Access Request: ${formData.fullName || "New Submission"}`;
@@ -62,11 +93,20 @@ Additional Comments: ${formData.comments || "None"}
   };
 
   const handleButtonClick = () => {
-    if (!formData.email || !formData.phone || errors.email || errors.phone) {
-      alert("Please fix the errors before proceeding.");
+    if (Object.values(errors).some((error) => error) || Object.values(formData).some((field) => !field.trim())) {
+      toast.error("Please fix the validation errors before proceeding.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
       return;
     }
-
+    
     const emailLink = generateGmailLink();
     window.open(emailLink, "_blank");
     router.push("/confirmation");
