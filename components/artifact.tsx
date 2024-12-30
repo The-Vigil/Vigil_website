@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Shield,
   ArrowRight,
@@ -7,17 +7,19 @@ import {
   Clock,
   DollarSign,
   ShieldCheck,
+  MenuIcon,
+  X
 } from "lucide-react";
 import Link from "next/link";
 import FloatingChatWindow from "./floatingChatWindow";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "outline";
-  className?: string;
 }
 
 interface ContactButtonProps {
   text: string;
+  className?: string;
   href?: string; // Optional href for linking
   onClick?: () => void; // Optional onClick for additional behavior
 }
@@ -80,6 +82,7 @@ interface BenefitItemProps {
 
 interface ContactButtonProps {
   text: string;
+  classname: string;
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({ icon, number, label }) => (
@@ -126,6 +129,7 @@ const BenefitItem: React.FC<BenefitItemProps> = ({ text }) => (
 const ContactButton: React.FC<ContactButtonProps> = ({
   text,
   href,
+  className,
   onClick,
 }) => {
   if (href) {
@@ -134,7 +138,7 @@ const ContactButton: React.FC<ContactButtonProps> = ({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="py-3 px-6 border border-slate-800 text-slate-400 rounded hover:bg-slate-700 transition"
+        className={`py-3 px-6 border border-slate-800 text-slate-400 rounded hover:bg-slate-700 transition ${className}`}
       >
         {text}
       </a>
@@ -153,6 +157,8 @@ const ContactButton: React.FC<ContactButtonProps> = ({
 };
 
 const LandingPage: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-black">
       {/* Navbar */}
@@ -163,24 +169,35 @@ const LandingPage: React.FC = () => {
             <Shield className="w-8 h-8 text-blue-500" />
             <span className="text-2xl font-bold text-white">VIGIL</span>
           </div>
+      <div className="md:hidden flex items-center">
+          <button
+            className="text-white focus:outline-none"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <X className="text-xl" /> // Close Icon\
+            ) : (
+              <MenuIcon className="text-xl"/> // Hamburger Icon
+            )}
+          </button>
+        </div>
 
           {/* Buttons Section */}
-          <div className="flex items-center gap-4">
-            <Link
-              href="/book"
-              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-            >
-              Contact Us
-            </Link>
-            <a
-              href="/Pitch_deck_vigil.pdf"
-              download="Pitch_deck_vigil.pdf" // Explicitly set the file name for download
-              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-            >
-              Pitch Deck
-            </a>
-
-          </div>
+           <div className={`md:flex gap-4 ${isMenuOpen ? "block bg-black/95 px-6 py-6" : "hidden"} absolute md:static top-20 left-0 w-full md:w-auto bg-black/95 md:bg-transparent text-center`}>
+          <Link
+            href="/book"
+            className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block md:inline-block mx-auto md:mx-0 mb-5 md:mb-0"
+          >
+            Contact Us
+          </Link>
+          <a
+            href="/Pitch_deck_vigil.pdf"
+            download="Pitch_deck_vigil.pdf" // Explicitly set the file name for download
+            className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block md:inline-block mx-auto md:mx-0"
+          >
+            Pitch Deck
+          </a>
+        </div>
         </div>
       </nav>
 
@@ -192,7 +209,7 @@ const LandingPage: React.FC = () => {
           <div className="text-center">
             {/* Pre-headline Alert */}
             <div className="inline-block mb-6">
-              <div className="px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 animate-pulse">
+              <div className="px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 animate-pulse me-0 md:me-4">
                 Stop Squatters Before They Enter
               </div>
             </div>
@@ -333,7 +350,7 @@ const LandingPage: React.FC = () => {
                 Be among the first in NYC to secure your property with next-gen
                 digital protection
               </p>
-              <div className="flex justify-between items-center gap-8 mb-8 text-left">
+              <div className="flex md:flex-row justify-between items-center flex-col gap-8 mb-8 text-left">
                 <div className="flex-shrink-0">
                   <BenefitItem text="Lifetime Founding Member Status" />
                 </div>
@@ -366,15 +383,14 @@ const LandingPage: React.FC = () => {
               Protect Your Property Today
             </h2>
           </Link>
-          <div className="flex justify-center space-x-6">
+          <div className="flex flex-col md:flex-row justify-center items-center ">
             <ContactButton
+              className="mb-4 md:mb-0 mr-0 md:mr-4"
               text="Contact: Contact@thevigil.ai"
-              href="https://mail.google.com/mail/?view=cm&fs=1&to=demo@vigil.com"
-            />
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=demo@vigil.com" classname={""}            />
             <ContactButton
               text="+1 (917) 238-4177"
-              onClick={() => alert("Redirecting to protect property rights!")}
-            />
+              onClick={() => alert("Redirecting to protect property rights!")} classname={""}            />
           </div>
         </div>
       </section>
