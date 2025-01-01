@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as RunPodResponse;
 
     // Poll for job completion
     const completedData = await pollForCompletion(data.id);
