@@ -175,67 +175,64 @@ const FloatingChatWindow: FC = () => {
     setIsLoading(false);
   };
 
-  const callRunPodEndpoint = async (
-    payload: Record<string, unknown>
-  ): Promise<RunPodResponse> => {
+const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<RunPodResponse> => {
     try {
-      const response = await fetch(`https://api.runpod.ai/v2/${ENDPOINT_ID}/run`, {
+      const response = await fetch('/api/runpod', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${RUNPOD_API_KEY}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ input: payload }),
+        body: JSON.stringify(payload),
       });
-
+  
       if (!response.ok) {
         throw new Error(`API request failed with status ${response.status}`);
       }
-
+  
       const data = await response.json();
-      return await pollForCompletion(data.id);
+      return data;
     } catch (error) {
-      console.error('Error calling RunPod:', error);
+      console.error('Error calling server API:', error);
       throw error;
     }
-  };
+  };  
 
-  const pollForCompletion = async (jobId: string): Promise<RunPodResponse> => {
-    const maxAttempts = 30;
-    const delayMs = 1000;
+  // const pollForCompletion = async (jobId: string): Promise<RunPodResponse> => {
+  //   const maxAttempts = 30;
+  //   const delayMs = 1000;
 
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      try {
-        const response = await fetch(
-          `https://api.runpod.ai/v2/${ENDPOINT_ID}/status/${jobId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${RUNPOD_API_KEY}`,
-            },
-          }
-        );
+  //   for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  //     try {
+  //       const response = await fetch(
+  //         `https://api.runpod.ai/v2/${ENDPOINT_ID}/status/${jobId}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${RUNPOD_API_KEY}`,
+  //           },
+  //         }
+  //       );
 
-        if (!response.ok) {
-          throw new Error(`Status check failed with status ${response.status}`);
-        }
+  //       if (!response.ok) {
+  //         throw new Error(`Status check failed with status ${response.status}`);
+  //       }
 
-        const data = await response.json();
+  //       const data = await response.json();
 
-        if (data.status === 'COMPLETED') {
-          return data;
-        } else if (data.status === 'FAILED') {
-          throw new Error(data.error);
-        }
+  //       if (data.status === 'COMPLETED') {
+  //         return data;
+  //       } else if (data.status === 'FAILED') {
+  //         throw new Error(data.error);
+  //       }
 
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
-      } catch (error) {
-        console.error(`Error in poll attempt ${attempt + 1}:`, error);
-        throw error;
-      }
-    }
+  //       await new Promise((resolve) => setTimeout(resolve, delayMs));
+  //     } catch (error) {
+  //       console.error(`Error in poll attempt ${attempt + 1}:`, error);
+  //       throw error;
+  //     }
+  //   }
 
-    throw new Error('Job timed out');
-  };
+  //   throw new Error('Job timed out');
+  // };
 
   const handleSendMessage = async (): Promise<void> => {
     if (!inputText.trim()) return;
