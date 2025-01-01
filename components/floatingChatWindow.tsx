@@ -50,10 +50,12 @@ const FloatingChatWindow: FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  const startRecording = async (): Promise<void> => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+const startRecording = async (): Promise<void> => {
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error('Browser does not support getUserMedia API.');
+    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       const audioChunks: Blob[] = [];
 
@@ -69,17 +71,56 @@ const FloatingChatWindow: FC = () => {
       mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.start();
       setIsRecording(true);
-    } catch (error) {
+    // Handle stream usage
+  } catch (error) {
+    if (error.name === 'NotAllowedError') {
+      console.error('Permission denied:', error);
+      setMessages((prev) => [
+        ...prev,
+        { type: 'error', text: 'Microphone access denied. Please enable permissions in browser settings.' },
+      ]);
+    } else {
       console.error('Error accessing microphone:', error);
       setMessages((prev) => [
         ...prev,
-        {
-          type: 'error',
-          text: 'Error accessing microphone. Please ensure microphone permissions are enabled.',
-        },
+        { type: 'error', text: 'Unable to access microphone. Ensure permissions are enabled and try again.' },
       ]);
     }
-  };
+  }
+};
+
+  // const startRecording = async (): Promise<void> => {
+  //   try {
+  //     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+  //       throw new Error('Browser does not support getUserMedia API.');
+  //     }
+  //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //     const mediaRecorder = new MediaRecorder(stream);
+  //     const audioChunks: Blob[] = [];
+
+  //     mediaRecorder.ondataavailable = (event) => {
+  //       audioChunks.push(event.data);
+  //     };
+
+  //     mediaRecorder.onstop = async () => {
+  //       const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+  //       await processAudioInput(audioBlob);
+  //     };
+
+  //     mediaRecorderRef.current = mediaRecorder;
+  //     mediaRecorder.start();
+  //     setIsRecording(true);
+  //   } catch (error) {
+  //     console.error('Error accessing microphone:', error);
+  //     setMessages((prev) => [
+  //       ...prev,
+  //       {
+  //         type: 'error',
+  //         text: 'Error accessing microphone. Please ensure microphone permissions are enabled.',
+  //       },
+  //     ]);
+  //   }
+  // };
 
   const stopRecording = (): void => {
     if (mediaRecorderRef.current && isRecording) {
@@ -155,8 +196,19 @@ const FloatingChatWindow: FC = () => {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
           const audio = new Audio(audioUrl);
-          await audio.play();
-          URL.revokeObjectURL(audioUrl);
+          try {
+              await audio.play();
+              URL.revokeObjectURL(audioUrl);
+
+            } catch (error) {
+              console.error('Audio playback failed:', error);
+              setMessages((prev) => [
+                ...prev,
+                { type: 'error', text: 'Unable to play audio. User interaction required.' },
+              ]);
+            }
+          // await audio.play();
+          // URL.revokeObjectURL(audioUrl);
         }
       }
     } catch (error) {
@@ -196,43 +248,6 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
       throw error;
     }
   };  
-
-  // const pollForCompletion = async (jobId: string): Promise<RunPodResponse> => {
-  //   const maxAttempts = 30;
-  //   const delayMs = 1000;
-
-  //   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-  //     try {
-  //       const response = await fetch(
-  //         `https://api.runpod.ai/v2/${ENDPOINT_ID}/status/${jobId}`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${RUNPOD_API_KEY}`,
-  //           },
-  //         }
-  //       );
-
-  //       if (!response.ok) {
-  //         throw new Error(`Status check failed with status ${response.status}`);
-  //       }
-
-  //       const data = await response.json();
-
-  //       if (data.status === 'COMPLETED') {
-  //         return data;
-  //       } else if (data.status === 'FAILED') {
-  //         throw new Error(data.error);
-  //       }
-
-  //       await new Promise((resolve) => setTimeout(resolve, delayMs));
-  //     } catch (error) {
-  //       console.error(`Error in poll attempt ${attempt + 1}:`, error);
-  //       throw error;
-  //     }
-  //   }
-
-  //   throw new Error('Job timed out');
-  // };
 
   const handleSendMessage = async (): Promise<void> => {
     if (!inputText.trim()) return;
