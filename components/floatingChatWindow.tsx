@@ -72,8 +72,8 @@ const startRecording = async (): Promise<void> => {
       mediaRecorder.start();
       setIsRecording(true);
     // Handle stream usage
-  } catch (error) {
-    if (error.name === 'NotAllowedError') {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === 'NotAllowedError') {
       console.error('Permission denied:', error);
       setMessages((prev) => [
         ...prev,

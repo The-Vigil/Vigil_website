@@ -88,10 +88,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json(completedData);
 
-  } catch (error: any) {
-    console.error('Error in RunPod API Route:', error.message || error);
+  } catch (error: unknown) {
+    console.error('Error in RunPod API Route:', error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: 'Internal Server Error', details: error.message || error },
+      { error: 'Internal Server Error', details: error instanceof Error ? error.message : error },
       { status: 500 }
     );
   }
