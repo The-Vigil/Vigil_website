@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, FC } from 'react';
 import { MessageSquare, X, Send, Mic, StopCircle } from 'lucide-react';
+import { Howl } from 'howler';
 
 interface Message {
   type: 'user' | 'assistant' | 'error' | 'system';
@@ -210,28 +211,32 @@ const startRecording = async (): Promise<void> => {
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
-  
-          // Stop any previously playing audio
-          if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0; // Reset playback position
-            audioRef.current.src = ''; // Clear the source
-          }
-  
-          // Set up and play new audio
-          const audio = new Audio(audioUrl);
-          audioRef.current = audio;
-          try {
-            await audio.play();
-          } catch (error) {
-            console.error('Audio playback failed:', error);
-            setMessages((prev) => [
-              ...prev,
-              { type: 'error', text: 'Unable to play audio. User interaction required.' },
-            ]);
-          }
-          URL.revokeObjectURL(audioUrl);
+        
+          // Use Howler.js for playback
+          const sound = new Howl({
+            src: [audioUrl],
+            format: ['wav'], // Specify the format
+            autoplay: true, // Automatically play when loaded
+            onend: () => {
+              URL.revokeObjectURL(audioUrl); // Cleanup URL after playback ends
+            },
+            onplayerror: (error: unknown) => {
+              if (error instanceof Error) {
+                console.error('Audio playback failed:', error.message);
+              } else {
+                console.error('Audio playback failed with an unknown error.');
+              }
+              setMessages((prev) => [
+                ...prev,
+                { type: 'error', text: 'Unable to play audio. User interaction required.' },
+              ]);
+            },
+            
+          });
+        
+          sound.play();
         }
+        
       }
     } catch (error) {
       console.error('Error processing audio:', error);
@@ -297,19 +302,31 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
-          // Stop any previously playing audio
-          if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0; // Reset playback position
-            audioRef.current.src = ''; // Clear the source
-          }
-  
-          // Set up and play new audio
-          const audio = new Audio(audioUrl);
-          audioRef.current = audio;
-          await audio.play();
-          URL.revokeObjectURL(audioUrl);
+        
+          // Use Howler.js for playback
+          const sound = new Howl({
+            src: [audioUrl],
+            format: ['wav'], // Specify the format
+            autoplay: true, // Automatically play when loaded
+            onend: () => {
+              URL.revokeObjectURL(audioUrl); // Cleanup URL after playback ends
+            },
+            onplayerror: (error: unknown) => {
+              if (error instanceof Error) {
+                console.error('Audio playback failed:', error.message);
+              } else {
+                console.error('Audio playback failed with an unknown error.');
+              }
+              setMessages((prev) => [
+                ...prev,
+                { type: 'error', text: 'Unable to play audio. User interaction required.' },
+              ]);
+            },            
+          });
+        
+          sound.play();
         }
+        
       }
     } catch (error) {
       console.error('Error:', error);
