@@ -210,7 +210,7 @@ const startRecording = async (): Promise<void> => {
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
-  
+          console.log('Audio URL2:', audioUrl);
           // Stop any previously playing audio
           if (audioRef.current) {
             audioRef.current.pause();
@@ -230,7 +230,9 @@ const startRecording = async (): Promise<void> => {
               { type: 'error', text: 'Unable to play audio. User interaction required.' },
             ]);
           }
-          URL.revokeObjectURL(audioUrl);
+          finally {
+            URL.revokeObjectURL(audioUrl);
+          }
         }
       }
     } catch (error) {
@@ -297,6 +299,7 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
+           console.log('Audio URL:', audioUrl);
           // Stop any previously playing audio
           if (audioRef.current) {
             audioRef.current.pause();
