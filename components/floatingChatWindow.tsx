@@ -56,15 +56,17 @@ const FloatingChatWindow: FC = () => {
   const stopAudioPlayback = () => {
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.currentTime = 0; // Reset playback to start
-      audioRef.current.src = ''; // Clear the source
+      audioRef.current.currentTime = 0; // Reset playback
+      audioRef.current.src = ''; // Clear source
     }
+     Howler.stop(); // Stops all audio from Howler.js globally
   };
-
+  
   const handleClose = () => {
-    stopAudioPlayback(); // Stop audio when closing the chat window
+    stopAudioPlayback(); // Stop any audio
     setIsOpen(false); // Close the chat window
   };
+  
   
 const startRecording = async (): Promise<void> => {
   try {
