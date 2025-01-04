@@ -24,6 +24,7 @@ const FloatingChatWindow: FC = () => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null); // Reference for audio playback
 
 
   const RUNPOD_API_KEY = process.env.NEXT_PUBLIC_RUNPOD_API_KEY;
@@ -50,6 +51,20 @@ const FloatingChatWindow: FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const stopAudioPlayback = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0; // Reset playback to start
+      audioRef.current.src = ''; // Clear the source
+    }
+  };
+
+  const handleClose = () => {
+    stopAudioPlayback(); // Stop audio when closing the chat window
+    setIsOpen(false); // Close the chat window
+  };
+  
 const startRecording = async (): Promise<void> => {
   try {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -157,7 +172,7 @@ const startRecording = async (): Promise<void> => {
     setIsLoading(true);
     try {
       const base64Audio = await blobToBase64(blob);
-
+  
       setMessages((prev) => [
         ...prev,
         {
@@ -165,14 +180,14 @@ const startRecording = async (): Promise<void> => {
           text: 'Processing your voice message...',
         },
       ]);
-
+  
       const response = await callRunPodEndpoint({
         type: 'audio',
         audio: base64Audio,
       });
-
+  
       setMessages((prev) => prev.filter((msg) => msg.text !== 'Processing your voice message...'));
-
+  
       if (response?.output?.user_input?.text) {
         setMessages((prev) => [
           ...prev,
@@ -182,33 +197,40 @@ const startRecording = async (): Promise<void> => {
           },
         ]);
       }
-
+  
       if (response?.output?.assistant_response) {
-       setMessages((prev) => [
-    ...prev,
-    {
-      type: 'assistant',
-      text: response?.output?.assistant_response?.text || '',
-    },
-  ]);
-
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: 'assistant',
+            text: response?.output?.assistant_response?.text || '',
+          },
+        ]);
+  
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
+  
+          // Stop any previously playing audio
+          if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0; // Reset playback position
+            audioRef.current.src = ''; // Clear the source
+          }
+  
+          // Set up and play new audio
           const audio = new Audio(audioUrl);
+          audioRef.current = audio;
           try {
-              await audio.play();
-              URL.revokeObjectURL(audioUrl);
-
-            } catch (error) {
-              console.error('Audio playback failed:', error);
-              setMessages((prev) => [
-                ...prev,
-                { type: 'error', text: 'Unable to play audio. User interaction required.' },
-              ]);
-            }
-          // await audio.play();
-          // URL.revokeObjectURL(audioUrl);
+            await audio.play();
+          } catch (error) {
+            console.error('Audio playback failed:', error);
+            setMessages((prev) => [
+              ...prev,
+              { type: 'error', text: 'Unable to play audio. User interaction required.' },
+            ]);
+          }
+          URL.revokeObjectURL(audioUrl);
         }
       }
     } catch (error) {
@@ -225,7 +247,7 @@ const startRecording = async (): Promise<void> => {
       ]);
     }
     setIsLoading(false);
-  };
+  };  
 
 const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<RunPodResponse> => {
     try {
@@ -275,7 +297,16 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
+          // Stop any previously playing audio
+          if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0; // Reset playback position
+            audioRef.current.src = ''; // Clear the source
+          }
+  
+          // Set up and play new audio
           const audio = new Audio(audioUrl);
+          audioRef.current = audio;
           await audio.play();
           URL.revokeObjectURL(audioUrl);
         }
@@ -312,7 +343,7 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
                 <h3 className="font-semibold">Chat with  AEGIS  Vigil&#39;s AI Assistant</h3>
               </div>
               <button 
-                onClick={() => setIsOpen(false)} 
+                onClick={handleClose}
                 className="hover:bg-[#414868] rounded-full p-1 transition-colors duration-200">
                 <X className="w-5 h-5" />
               </button>
