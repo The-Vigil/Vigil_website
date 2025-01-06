@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Shield } from 'lucide-react';
 import { toast } from "react-toastify";
@@ -197,19 +197,23 @@ Additional Comments: ${formData.comments || "None"}
               placeholder="Enter property address"
               required
             />
-            {addressSuggestions.length > 0 && (
-              <ul className="bg-black border border-gray-700 rounded-lg mt-2">
-                {addressSuggestions.map((suggestion, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleAddressSelect(suggestion.properties.formatted)}
-                    className="px-4 py-2 cursor-pointer hover:bg-gray-700"
-                  >
-                    {suggestion.properties.formatted}
-                  </li>
-                ))}
-              </ul>
-            )}
+{isLoading ? (
+    <div className="mt-2 text-gray-400 text-sm">Fetching suggestions...</div>
+  ) : (
+    addressSuggestions.length > 0 && (
+      <ul className="bg-black border border-gray-700 rounded-lg mt-2">
+        {addressSuggestions.map((suggestion, index) => (
+          <li
+            key={index}
+            onClick={() => handleAddressSelect(suggestion.properties.formatted)}
+            className="px-4 py-2 cursor-pointer hover:bg-gray-700"
+          >
+            {suggestion.properties.formatted}
+          </li>
+        ))}
+      </ul>
+    )
+  )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-300">Phone Number</label>
