@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, FC } from 'react';
-import { MessageSquare, X, Send, Mic, StopCircle, Bot } from 'lucide-react';
+import { X, Send, Mic, StopCircle, Bot } from 'lucide-react';
 import { Howl } from 'howler';
 import CosmicRingComponent from './cosmicRingComponent';
+
 interface Message {
   type: 'user' | 'assistant' | 'error' | 'system';
   text: string;
@@ -26,7 +27,7 @@ const FloatingChatWindow: FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null); // Reference for audio playback
-  const [iconPosition, setIconPosition] = useState({ x: 0, y: 0 });
+  // const [iconPosition, setIconPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -49,41 +50,21 @@ const FloatingChatWindow: FC = () => {
       audioRef.current.currentTime = 0; // Reset playback
       audioRef.current.src = ''; // Clear source
     }
-     Howler.stop(); // Stops all audio from Howler.js globally
+    Howler.stop(); // Stops all audio from Howler.js globally
   };
 
-   // Floating animation for icon
-   useEffect(() => {
-    let timeoutId: number;
-    const animateIcon = () => {
-      const radius = 10;
-      const angle = (Date.now() / 1000) % (2 * Math.PI);
-      setIconPosition({
-        x: Math.cos(angle) * radius,
-        y: Math.sin(angle) * radius
-      });
-      timeoutId = requestAnimationFrame(animateIcon);
-    };
-    
-    if (!isOpen) {
-      animateIcon();
-    }
-
-    return () => cancelAnimationFrame(timeoutId);
-  }, [isOpen]);
-  
   const handleClose = () => {
     stopAudioPlayback(); // Stop any audio
     setIsOpen(false); // Close the chat window
   };
-  
-  
-const startRecording = async (): Promise<void> => {
-  try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error('Browser does not support getUserMedia API.');
-    }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+
+  const startRecording = async (): Promise<void> => {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Browser does not support getUserMedia API.');
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       const audioChunks: Blob[] = [];
 
@@ -99,23 +80,23 @@ const startRecording = async (): Promise<void> => {
       mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.start();
       setIsRecording(true);
-    // Handle stream usage
-  } catch (error: unknown) {
-    if (error instanceof Error && error.name === 'NotAllowedError') {
-      console.error('Permission denied:', error);
-      setMessages((prev) => [
-        ...prev,
-        { type: 'error', text: 'Microphone access denied. Please enable permissions in browser settings.' },
-      ]);
-    } else {
-      console.error('Error accessing microphone:', error);
-      setMessages((prev) => [
-        ...prev,
-        { type: 'error', text: 'Unable to access microphone. Ensure permissions are enabled and try again.' },
-      ]);
+      // Handle stream usage
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'NotAllowedError') {
+        console.error('Permission denied:', error);
+        setMessages((prev) => [
+          ...prev,
+          { type: 'error', text: 'Microphone access denied. Please enable permissions in browser settings.' },
+        ]);
+      } else {
+        console.error('Error accessing microphone:', error);
+        setMessages((prev) => [
+          ...prev,
+          { type: 'error', text: 'Unable to access microphone. Ensure permissions are enabled and try again.' },
+        ]);
+      }
     }
-  }
-};
+  };
 
   const stopRecording = (): void => {
     if (mediaRecorderRef.current && isRecording) {
@@ -152,7 +133,7 @@ const startRecording = async (): Promise<void> => {
     setIsLoading(true);
     try {
       const base64Audio = await blobToBase64(blob);
-  
+
       setMessages((prev) => [
         ...prev,
         {
@@ -160,14 +141,14 @@ const startRecording = async (): Promise<void> => {
           text: 'Processing your voice message...',
         },
       ]);
-  
+
       const response = await callRunPodEndpoint({
         type: 'audio',
         audio: base64Audio,
       });
-  
+
       setMessages((prev) => prev.filter((msg) => msg.text !== 'Processing your voice message...'));
-  
+
       if (response?.output?.user_input?.text) {
         setMessages((prev) => [
           ...prev,
@@ -177,7 +158,7 @@ const startRecording = async (): Promise<void> => {
           },
         ]);
       }
-  
+
       if (response?.output?.assistant_response) {
         setMessages((prev) => [
           ...prev,
@@ -186,11 +167,11 @@ const startRecording = async (): Promise<void> => {
             text: response?.output?.assistant_response?.text || '',
           },
         ]);
-  
+
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
-        
+
           // Use Howler.js for playback
           const sound = new Howl({
             src: [audioUrl],
@@ -210,12 +191,12 @@ const startRecording = async (): Promise<void> => {
                 { type: 'error', text: 'Unable to play audio. User interaction required.' },
               ]);
             },
-            
+
           });
-        
+
           sound.play();
         }
-        
+
       }
     } catch (error) {
       console.error('Error processing audio:', error);
@@ -231,9 +212,9 @@ const startRecording = async (): Promise<void> => {
       ]);
     }
     setIsLoading(false);
-  };  
+  };
 
-const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<RunPodResponse> => {
+  const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<RunPodResponse> => {
     try {
       const response = await fetch('/api/runpod', {
         method: 'POST',
@@ -242,18 +223,18 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error(`API request failed with status ${response.status}`);
       }
-  
+
       const data = await response.json();
       return data;
     } catch (error) {
       console.error('Error calling server API:', error);
       throw error;
     }
-  };  
+  };
 
   const handleSendMessage = async (): Promise<void> => {
     if (!inputText.trim()) return;
@@ -281,7 +262,7 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
-        
+
           // Use Howler.js for playback
           const sound = new Howl({
             src: [audioUrl],
@@ -300,12 +281,12 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
                 ...prev,
                 { type: 'error', text: 'Unable to play audio. User interaction required.' },
               ]);
-            },            
+            },
           });
-        
+
           sound.play();
         }
-        
+
       }
     } catch (error) {
       console.error('Error:', error);
@@ -321,10 +302,9 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
   };
 
   return (
-<div className="fixed bottom-4 right-4 z-50">
-      <div className={`transition-all duration-500 ease-in-out transform ${
-        isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
-      }`}>
+    <div className="fixed bottom-4 right-4 z-50">
+      <div className={`transition-all duration-500 ease-in-out transform ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
+        }`}>
         {isOpen && (
           <div className="chat-container w-96 max-h-[600px] rounded-2xl flex flex-col">
             {/* Header */}
@@ -333,7 +313,7 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
                 <Bot className="w-6 h-6 text-white wave-animation" />
                 <h3 className="font-bold text-white text-lg">AEGIS Vigil AI</h3>
               </div>
-              <button 
+              <button
                 onClick={handleClose}
                 className="hover:bg-white/20 rounded-full p-2 transition-all duration-300 text-white z-10"
               >
@@ -350,15 +330,14 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
                   className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] p-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] message-glow ${
-                      message.type === 'user'
+                    className={`max-w-[80%] p-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] message-glow ${message.type === 'user'
                         ? 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'
                         : message.type === 'error'
-                        ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
-                        : message.type === 'system'
-                        ? 'bg-gray-700/80 text-gray-200'
-                        : 'bg-gradient-to-r from-gray-700/90 to-gray-800/90 text-white'
-                    }`}
+                          ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
+                          : message.type === 'system'
+                            ? 'bg-gray-700/80 text-gray-200'
+                            : 'bg-gradient-to-r from-gray-700/90 to-gray-800/90 text-white'
+                      }`}
                   >
                     {message.text}
                   </div>
@@ -397,11 +376,10 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
                 />
                 <button
                   onClick={isRecording ? stopRecording : startRecording}
-                  className={`p-3 rounded-full transition-all duration-300 ${
-                    isRecording 
-                      ? 'bg-red-500 hover:bg-red-600 animate-pulse' 
+                  className={`p-3 rounded-full transition-all duration-300 ${isRecording
+                      ? 'bg-red-500 hover:bg-red-600 animate-pulse'
                       : 'bg-blue-500 hover:bg-blue-600'
-                  }`}
+                    }`}
                 >
                   {isRecording ? (
                     <StopCircle className="w-5 h-5 text-white animate-spin" />
@@ -429,14 +407,28 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
 
       {/* Floating Chat Button */}
       {!isOpen && (
-        <button 
-        onClick={() => setIsOpen(true)} 
-        className=""
-        aria-label="Open Chat"
-      >
-        <CosmicRingComponent />
-      </button>
+  <div
+    onClick={() => setIsOpen(true)}
+    role="button"
+    tabIndex={0}
+    className="relative group"
+    aria-label="Open Chat"
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        setIsOpen(true);
+      }
+    }}
+  >
+    {/* Background Glow */}
+    {/* <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-2xl transition-all duration-500" /> */}
+
+    {/* CosmicRingComponent */}
+    <div className="relative rounded-full cursor-pointer transform transition-transform duration-300 group-hover:scale-105">
+      <CosmicRingComponent />
+    </div>
+  </div>
 )}
+
     </div>
   );
 };

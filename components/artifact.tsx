@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import FloatingChatWindow from "./floatingChatWindow";
-import CosmicRingChat from "./ftWindow";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "outline";
