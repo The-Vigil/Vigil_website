@@ -20,7 +20,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 interface ContactButtonProps {
   text: string;
   className?: string;
-  href?: string; // Optional href for linking
+  href?: string; 
   onClick?: () => void; // Optional onClick for additional behavior
 }
 
