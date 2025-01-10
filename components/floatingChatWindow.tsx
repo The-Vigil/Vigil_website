@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, FC } from 'react';
 import { X, Send, Mic, StopCircle, Bot } from 'lucide-react';
 import { Howl } from 'howler';
 import CosmicRingComponent from './cosmicRingComponent';
+import CosmicRing from './cosmicRing';
 
 interface Message {
   type: 'user' | 'assistant' | 'error' | 'system';
@@ -310,7 +311,8 @@ const FloatingChatWindow: FC = () => {
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 rounded-t-2xl flex items-center justify-between relative overflow-hidden">
               <div className="flex items-center space-x-3 z-10">
-                <Bot className="w-6 h-6 text-white wave-animation" />
+                <CosmicRing />
+                {/* <Bot className="w-6 h-6 text-white wave-animation" /> */}
                 <h3 className="font-bold text-white text-lg">AEGIS Vigil AI</h3>
               </div>
               <button
@@ -420,7 +422,7 @@ const FloatingChatWindow: FC = () => {
     }}
   >
     {/* Background Glow */}
-    {/* <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-2xl transition-all duration-500" /> */}
+    <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-2xl transition-all duration-500" />
 
     {/* CosmicRingComponent */}
     <div className="relative rounded-full cursor-pointer transform transition-transform duration-300 group-hover:scale-105">

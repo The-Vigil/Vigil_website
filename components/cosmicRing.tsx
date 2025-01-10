@@ -15,7 +15,7 @@ interface Particle {
   alpha?: number;
 }
 
-const CosmicRingComponent: React.FC = () => {
+const CosmicRing: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const particlesRef = useRef<Particle[]>([]); // Store particles here
@@ -32,7 +32,7 @@ const CosmicRingComponent: React.FC = () => {
       ctx = canvas.getContext('2d');
       if (!ctx) return false;
 
-      const size = 100;
+      const size = 30;
       canvas.width = size * 2;
       canvas.height = size * 2;
       canvas.style.width = `${size}px`;
@@ -68,7 +68,7 @@ const CosmicRingComponent: React.FC = () => {
       }
 
       // Nebula particles
-      for (let i = 0; i < 80; i++) {
+      for (let i = 0; i < 50; i++) {
         const angle = Math.random() * Math.PI * 2;
         const radius = Math.random() * size * 0.4 + size * 0.2;
         particles.push({
@@ -225,4 +225,4 @@ const CosmicRingComponent: React.FC = () => {
   );
 };
 
-export default CosmicRingComponent;
+export default CosmicRing;
