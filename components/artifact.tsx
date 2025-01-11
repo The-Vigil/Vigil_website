@@ -229,7 +229,7 @@ const LandingPage: React.FC = () => {
 
             {/* Subheadline */}
             <p className="text-xl md:text-2xl text-slate-400 mb-8 max-w-3xl mx-auto">
-              Tramsform a 6-months legal battle into 60 seconds verification.
+              Transform a 6-months legal battle into 60 seconds verification.
               Secure Your Property Ownership Digitally.
             </p>
 
