@@ -6,6 +6,12 @@ import { Shield } from 'lucide-react';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+interface AddressSuggestion {
+  properties: {
+    formatted: string;
+  };
+}
+
 const VigilForm = () => {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -22,12 +28,15 @@ const VigilForm = () => {
     phone: "",
   });
 
+  const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  
+
     // Field-specific validation
     if (name === "fullName") {
       const nameRegex = /^[a-zA-Z\s]{2,}$/;
@@ -36,7 +45,7 @@ const VigilForm = () => {
         fullName: nameRegex.test(value) ? "" : "Please enter a valid full name.",
       }));
     }
-  
+
     if (name === "email") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       setErrors((prev) => ({
@@ -44,7 +53,7 @@ const VigilForm = () => {
         email: emailRegex.test(value) ? "" : "Please enter a valid email address.",
       }));
     }
-  
+
     if (name === "phone") {
       const phoneRegex = /^(\+1|1)?[-.\s]?(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$/;
       setErrors((prev) => ({
@@ -54,21 +63,22 @@ const VigilForm = () => {
           : "Enter a valid phone number for NYC or Chicago.",
       }));
     }
-  
+
     if (name === "address") {
       setErrors((prev) => ({
         ...prev,
         address: value.trim() ? "" : "Please enter a valid address.",
       }));
+      fetchAddressSuggestions(value);
     }
-  
+
     if (name === "propertyType") {
       setErrors((prev) => ({
         ...prev,
         propertyType: value ? "" : "Please select a property type.",
       }));
     }
-  
+
     if (name === "interestLevel") {
       setErrors((prev) => ({
         ...prev,
@@ -76,7 +86,31 @@ const VigilForm = () => {
       }));
     }
   };
-  
+
+  const fetchAddressSuggestions = async (text: string) => {
+    if (!text.trim()) {
+      setAddressSuggestions([]);
+      return;
+    }
+    setIsLoading(true);
+    const apiKey = "d88476f5ea58479b9841c31a02d92352";
+    try {
+      const response = await fetch(
+        `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(text)}&apiKey=${apiKey}`
+      );
+      const data = await response.json();
+      setAddressSuggestions(data.features || []);
+    } catch (error) {
+      console.error("Error fetching address suggestions:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddressSelect = (address: string) => {
+    setFormData((prev) => ({ ...prev, address }));
+    setAddressSuggestions([]);
+  };
 
   const generateGmailLink = () => {
     const subject = `Early Access Request: ${formData.fullName || "New Submission"}`;
@@ -106,7 +140,7 @@ Additional Comments: ${formData.comments || "None"}
       });
       return;
     }
-    
+
     const emailLink = generateGmailLink();
     window.open(emailLink, "_blank");
     router.push("/confirmation");
@@ -115,7 +149,7 @@ Additional Comments: ${formData.comments || "None"}
   return (
     <div className="min-h-screen bg-black text-gray-100">
       <div className="max-w-2xl mx-auto p-6">
-      <div className="mb-8 text-center">
+        <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Shield className="w-8 h-8 text-blue-500" />
             <h1 className="text-3xl font-bold text-white">VIGIL</h1>
@@ -163,6 +197,23 @@ Additional Comments: ${formData.comments || "None"}
               placeholder="Enter property address"
               required
             />
+{isLoading ? (
+    <div className="mt-2 text-gray-400 text-sm">Fetching suggestions...</div>
+  ) : (
+    addressSuggestions.length > 0 && (
+      <ul className="bg-black border border-gray-700 rounded-lg mt-2">
+        {addressSuggestions.map((suggestion, index) => (
+          <li
+            key={index}
+            onClick={() => handleAddressSelect(suggestion.properties.formatted)}
+            className="px-4 py-2 cursor-pointer hover:bg-gray-700"
+          >
+            {suggestion.properties.formatted}
+          </li>
+        ))}
+      </ul>
+    )
+  )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-300">Phone Number</label>

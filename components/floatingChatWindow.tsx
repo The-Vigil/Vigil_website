@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect, FC } from 'react';
-import { MessageSquare, X, Send, Mic, StopCircle } from 'lucide-react';
+import { X, Send, Mic, StopCircle, Bot } from 'lucide-react';
+import { Howl } from 'howler';
+import CosmicRingComponent from './cosmicRingComponent';
+import CosmicRing from './cosmicRing';
 
 interface Message {
   type: 'user' | 'assistant' | 'error' | 'system';
@@ -25,17 +28,7 @@ const FloatingChatWindow: FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null); // Reference for audio playback
-
-
-  const RUNPOD_API_KEY = process.env.NEXT_PUBLIC_RUNPOD_API_KEY;
-  const ENDPOINT_ID = process.env.NEXT_PUBLIC_ENDPOINT_ID;
-
-  console.log(RUNPOD_API_KEY);
-  console.log(ENDPOINT_ID);
-  console.log(process.env.NEXT_PUBLIC_Shahrukh)
-  console.log(process.env);
-
-
+  // const [iconPosition, setIconPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -55,22 +48,24 @@ const FloatingChatWindow: FC = () => {
   const stopAudioPlayback = () => {
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.currentTime = 0; // Reset playback to start
-      audioRef.current.src = ''; // Clear the source
+      audioRef.current.currentTime = 0; // Reset playback
+      audioRef.current.src = ''; // Clear source
     }
+    Howler.stop(); // Stops all audio from Howler.js globally
   };
 
   const handleClose = () => {
-    stopAudioPlayback(); // Stop audio when closing the chat window
+    stopAudioPlayback(); // Stop any audio
     setIsOpen(false); // Close the chat window
   };
-  
-const startRecording = async (): Promise<void> => {
-  try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error('Browser does not support getUserMedia API.');
-    }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+
+  const startRecording = async (): Promise<void> => {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Browser does not support getUserMedia API.');
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       const audioChunks: Blob[] = [];
 
@@ -86,56 +81,23 @@ const startRecording = async (): Promise<void> => {
       mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.start();
       setIsRecording(true);
-    // Handle stream usage
-  } catch (error: unknown) {
-    if (error instanceof Error && error.name === 'NotAllowedError') {
-      console.error('Permission denied:', error);
-      setMessages((prev) => [
-        ...prev,
-        { type: 'error', text: 'Microphone access denied. Please enable permissions in browser settings.' },
-      ]);
-    } else {
-      console.error('Error accessing microphone:', error);
-      setMessages((prev) => [
-        ...prev,
-        { type: 'error', text: 'Unable to access microphone. Ensure permissions are enabled and try again.' },
-      ]);
+      // Handle stream usage
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'NotAllowedError') {
+        console.error('Permission denied:', error);
+        setMessages((prev) => [
+          ...prev,
+          { type: 'error', text: 'Microphone access denied. Please enable permissions in browser settings.' },
+        ]);
+      } else {
+        console.error('Error accessing microphone:', error);
+        setMessages((prev) => [
+          ...prev,
+          { type: 'error', text: 'Unable to access microphone. Ensure permissions are enabled and try again.' },
+        ]);
+      }
     }
-  }
-};
-
-  // const startRecording = async (): Promise<void> => {
-  //   try {
-  //     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-  //       throw new Error('Browser does not support getUserMedia API.');
-  //     }
-  //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  //     const mediaRecorder = new MediaRecorder(stream);
-  //     const audioChunks: Blob[] = [];
-
-  //     mediaRecorder.ondataavailable = (event) => {
-  //       audioChunks.push(event.data);
-  //     };
-
-  //     mediaRecorder.onstop = async () => {
-  //       const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-  //       await processAudioInput(audioBlob);
-  //     };
-
-  //     mediaRecorderRef.current = mediaRecorder;
-  //     mediaRecorder.start();
-  //     setIsRecording(true);
-  //   } catch (error) {
-  //     console.error('Error accessing microphone:', error);
-  //     setMessages((prev) => [
-  //       ...prev,
-  //       {
-  //         type: 'error',
-  //         text: 'Error accessing microphone. Please ensure microphone permissions are enabled.',
-  //       },
-  //     ]);
-  //   }
-  // };
+  };
 
   const stopRecording = (): void => {
     if (mediaRecorderRef.current && isRecording) {
@@ -172,7 +134,7 @@ const startRecording = async (): Promise<void> => {
     setIsLoading(true);
     try {
       const base64Audio = await blobToBase64(blob);
-  
+
       setMessages((prev) => [
         ...prev,
         {
@@ -180,14 +142,14 @@ const startRecording = async (): Promise<void> => {
           text: 'Processing your voice message...',
         },
       ]);
-  
+
       const response = await callRunPodEndpoint({
         type: 'audio',
         audio: base64Audio,
       });
-  
+
       setMessages((prev) => prev.filter((msg) => msg.text !== 'Processing your voice message...'));
-  
+
       if (response?.output?.user_input?.text) {
         setMessages((prev) => [
           ...prev,
@@ -197,7 +159,7 @@ const startRecording = async (): Promise<void> => {
           },
         ]);
       }
-  
+
       if (response?.output?.assistant_response) {
         setMessages((prev) => [
           ...prev,
@@ -206,34 +168,36 @@ const startRecording = async (): Promise<void> => {
             text: response?.output?.assistant_response?.text || '',
           },
         ]);
-  
+
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
-          console.log('Audio URL2:', audioUrl);
-          // Stop any previously playing audio
-          if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0; // Reset playback position
-            audioRef.current.src = ''; // Clear the source
-          }
-  
-          // Set up and play new audio
-          const audio = new Audio(audioUrl);
-          audioRef.current = audio;
-          try {
-            await audio.play();
-          } catch (error) {
-            console.error('Audio playback failed:', error);
-            setMessages((prev) => [
-              ...prev,
-              { type: 'error', text: 'Unable to play audio. User interaction required.' },
-            ]);
-          }
-          finally {
-            URL.revokeObjectURL(audioUrl);
-          }
+
+          // Use Howler.js for playback
+          const sound = new Howl({
+            src: [audioUrl],
+            format: ['wav'], // Specify the format
+            autoplay: true, // Automatically play when loaded
+            onend: () => {
+              URL.revokeObjectURL(audioUrl); // Cleanup URL after playback ends
+            },
+            onplayerror: (error: unknown) => {
+              if (error instanceof Error) {
+                console.error('Audio playback failed:', error.message);
+              } else {
+                console.error('Audio playback failed with an unknown error.');
+              }
+              setMessages((prev) => [
+                ...prev,
+                { type: 'error', text: 'Unable to play audio. User interaction required.' },
+              ]);
+            },
+
+          });
+
+          sound.play();
         }
+
       }
     } catch (error) {
       console.error('Error processing audio:', error);
@@ -249,9 +213,9 @@ const startRecording = async (): Promise<void> => {
       ]);
     }
     setIsLoading(false);
-  };  
+  };
 
-const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<RunPodResponse> => {
+  const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<RunPodResponse> => {
     try {
       const response = await fetch('/api/runpod', {
         method: 'POST',
@@ -260,18 +224,18 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error(`API request failed with status ${response.status}`);
       }
-  
+
       const data = await response.json();
       return data;
     } catch (error) {
       console.error('Error calling server API:', error);
       throw error;
     }
-  };  
+  };
 
   const handleSendMessage = async (): Promise<void> => {
     if (!inputText.trim()) return;
@@ -299,20 +263,31 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
         if (response.output.assistant_response.audio) {
           const audioData = base64ToBlob(response.output.assistant_response.audio);
           const audioUrl = URL.createObjectURL(audioData);
-           console.log('Audio URL:', audioUrl);
-          // Stop any previously playing audio
-          if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0; // Reset playback position
-            audioRef.current.src = ''; // Clear the source
-          }
-  
-          // Set up and play new audio
-          const audio = new Audio(audioUrl);
-          audioRef.current = audio;
-          await audio.play();
-          URL.revokeObjectURL(audioUrl);
+
+          // Use Howler.js for playback
+          const sound = new Howl({
+            src: [audioUrl],
+            format: ['wav'], // Specify the format
+            autoplay: true, // Automatically play when loaded
+            onend: () => {
+              URL.revokeObjectURL(audioUrl); // Cleanup URL after playback ends
+            },
+            onplayerror: (error: unknown) => {
+              if (error instanceof Error) {
+                console.error('Audio playback failed:', error.message);
+              } else {
+                console.error('Audio playback failed with an unknown error.');
+              }
+              setMessages((prev) => [
+                ...prev,
+                { type: 'error', text: 'Unable to play audio. User interaction required.' },
+              ]);
+            },
+          });
+
+          sound.play();
         }
+
       }
     } catch (error) {
       console.error('Error:', error);
@@ -327,68 +302,71 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
     setIsLoading(false);
   };
 
-  // const predefinedQuestions: string[] = [
-  //   "Tell me about Vigil's digital verification system ",
-  //   "What is Vigil's core service offering?",
-  //   "What should I do if there is an immediate threat to my property?"
-  // ];
-
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      <div className={`transition-all duration-300 ease-in-out transform ${
-        isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
-      }`}>
+      <div className={`transition-all duration-500 ease-in-out transform ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
+        }`}>
         {isOpen && (
-          <div className="bg-[#1a1b26] rounded-lg shadow-xl w-96 max-h-[600px] flex flex-col animate-slideUp">
-            <div className="bg-gradient-to-r from-[#24283b] to-[#1a1b26] text-white p-4 rounded-t-lg flex justify-between items-center border-b border-[#414868]">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                <h3 className="font-semibold">Chat with  AEGIS  Vigil&#39;s AI Assistant</h3>
+          <div className="chat-container w-96 max-h-[600px] rounded-2xl flex flex-col">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 rounded-t-2xl flex items-center justify-between relative overflow-hidden">
+              <div className="flex items-center space-x-3 z-10">
+                <CosmicRing />
+                {/* <Bot className="w-6 h-6 text-white wave-animation" /> */}
+                <h3 className="font-bold text-white text-lg">AEGIS Vigil AI</h3>
               </div>
-              <button 
+              <button
                 onClick={handleClose}
-                className="hover:bg-[#414868] rounded-full p-1 transition-colors duration-200">
+                className="hover:bg-white/20 rounded-full p-2 transition-all duration-300 text-white z-10"
+              >
                 <X className="w-5 h-5" />
               </button>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 animate-pulse"></div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[300px] max-h-[400px] scrollbar-thin scrollbar-thumb-[#414868] scrollbar-track-[#1a1b26]">
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[300px] max-h-[400px] bg-gradient-to-b from-gray-900 to-gray-800">
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}
+                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] p-3 rounded-lg transform transition-all duration-200 hover:scale-[1.02] ${
-                      message.type === 'user'
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
+                    className={`max-w-[80%] p-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] message-glow ${message.type === 'user'
+                        ? 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'
                         : message.type === 'error'
-                        ? 'bg-gradient-to-r from-red-600 to-red-500 text-white'
-                        : message.type === 'system'
-                        ? 'bg-[#414868] text-gray-300 italic'
-                        : 'bg-gradient-to-r from-[#24283b] to-[#1a1b26] text-white'
-                    } shadow-lg hover:shadow-xl`}
+                          ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
+                          : message.type === 'system'
+                            ? 'bg-gray-700/80 text-gray-200'
+                            : 'bg-gradient-to-r from-gray-700/90 to-gray-800/90 text-white'
+                      }`}
                   >
                     {message.text}
                   </div>
                 </div>
               ))}
               {isLoading && (
-                <div className="flex justify-start animate-fadeIn">
-                  <div className="bg-[#24283b] text-white p-3 rounded-lg flex items-center space-x-2">
+                <div className="flex justify-start">
+                  <div className="bg-gray-800/90 text-white p-4 rounded-2xl flex items-center space-x-3 message-glow">
+                    <Bot className="w-5 h-5 animate-spin" />
                     <span>Processing</span>
-                    <span className="flex space-x-1">
-                      <span className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></span>
-                      <span className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                      <span className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
-                    </span>
+                    <div className="flex space-x-1">
+                      {[0, 1, 2].map((i) => (
+                        <div
+                          key={i}
+                          className="w-2 h-2 bg-blue-500 rounded-full"
+                          style={{ animation: 'pulse 1s ease-in-out infinite', animationDelay: `${i * 0.2}s` }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-4 border-t border-[#24283b]">
+            {/* Input Area */}
+            <div className="p-4 bg-gray-800 rounded-b-2xl border-t border-gray-700">
               <div className="flex items-center space-x-2">
                 <input
                   type="text"
@@ -396,32 +374,32 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder="Type your message..."
-                  className="flex-1 bg-[#24283b] text-white border border-[#414868] rounded-full px-4 py-2 focus:outline-none focus:border-blue-500 placeholder-gray-400 transition-all duration-200 focus:ring-2 focus:ring-blue-500/50"
+                  className="flex-1 bg-gray-900 text-white rounded-full px-6 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 placeholder-gray-400 input-glow"
                 />
                 <button
                   onClick={isRecording ? stopRecording : startRecording}
-                  className={`p-2 rounded-full transition-all duration-200 transform hover:scale-110 ${
-                    isRecording 
-                      ? 'bg-red-500 hover:bg-red-600 animate-pulse' 
+                  className={`p-3 rounded-full transition-all duration-300 ${isRecording
+                      ? 'bg-red-500 hover:bg-red-600 animate-pulse'
                       : 'bg-blue-500 hover:bg-blue-600'
-                  } text-white`}
+                    }`}
                 >
-                  {isRecording ? <StopCircle className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                  {isRecording ? (
+                    <StopCircle className="w-5 h-5 text-white animate-spin" />
+                  ) : (
+                    <Mic className="w-5 h-5 text-white" />
+                  )}
                 </button>
                 <button
                   onClick={handleSendMessage}
                   disabled={!inputText.trim()}
-                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-110"
+                  className="bg-blue-500 hover:bg-blue-600 rounded-full p-3 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-5 h-5 text-white" />
                 </button>
               </div>
               {isRecording && (
-                <div className="text-red-400 text-sm mt-2 text-center">
-                  <span className="animate-pulse flex items-center justify-center">
-                    <span className="mr-2 w-2 h-2 bg-red-500 rounded-full"></span>
-                    Recording... Click stop when finished
-                  </span>
+                <div className="text-red-400 text-sm mt-2 text-center animate-pulse">
+                  Recording in progress...
                 </div>
               )}
             </div>
@@ -429,16 +407,30 @@ const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<Run
         )}
       </div>
 
+      {/* Floating Chat Button */}
       {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full p-4 shadow-lg transition-all duration-300 transform hover:scale-110 hover:rotate-3 relative"
-        >
-          <MessageSquare className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-ping"></span>
-          <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></span>
-        </button>
-      )}
+  <div
+    onClick={() => setIsOpen(true)}
+    role="button"
+    tabIndex={0}
+    className="relative group"
+    aria-label="Open Chat"
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        setIsOpen(true);
+      }
+    }}
+  >
+    {/* Background Glow */}
+    <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-2xl transition-all duration-500" />
+
+    {/* CosmicRingComponent */}
+    <div className="relative rounded-full cursor-pointer transform transition-transform duration-300 group-hover:scale-105">
+      <CosmicRingComponent />
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
