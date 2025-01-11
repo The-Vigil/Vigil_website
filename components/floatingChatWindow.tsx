@@ -333,12 +333,12 @@ const FloatingChatWindow: FC = () => {
                 >
                   <div
                     className={`max-w-[80%] p-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] message-glow ${message.type === 'user'
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'
-                        : message.type === 'error'
-                          ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
-                          : message.type === 'system'
-                            ? 'bg-gray-700/80 text-gray-200'
-                            : 'bg-gradient-to-r from-gray-700/90 to-gray-800/90 text-white'
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'
+                      : message.type === 'error'
+                        ? 'bg-gradient-to-r from-red-500 to-red-700 text-white'
+                        : message.type === 'system'
+                          ? 'bg-gray-700/80 text-gray-200'
+                          : 'bg-gradient-to-r from-gray-700/90 to-gray-800/90 text-white'
                       }`}
                   >
                     {message.text}
@@ -379,8 +379,8 @@ const FloatingChatWindow: FC = () => {
                 <button
                   onClick={isRecording ? stopRecording : startRecording}
                   className={`p-3 rounded-full transition-all duration-300 ${isRecording
-                      ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-                      : 'bg-blue-500 hover:bg-blue-600'
+                    ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                    : 'bg-blue-500 hover:bg-blue-600'
                     }`}
                 >
                   {isRecording ? (
@@ -409,27 +409,27 @@ const FloatingChatWindow: FC = () => {
 
       {/* Floating Chat Button */}
       {!isOpen && (
-  <div
-    onClick={() => setIsOpen(true)}
-    role="button"
-    tabIndex={0}
-    className="relative group"
-    aria-label="Open Chat"
-    onKeyDown={(e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        setIsOpen(true);
-      }
-    }}
-  >
-    {/* Background Glow */}
-    <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-2xl transition-all duration-500" />
+        <div
+          onClick={() => setIsOpen(true)}
+          role="button"
+          tabIndex={0}
+          className="relative group"
+          aria-label="Open Chat"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              setIsOpen(true);
+            }
+          }}
+        >
+          {/* Background Glow */}
+          <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-2xl transition-all duration-500" />
 
-    {/* CosmicRingComponent */}
-    <div className="relative rounded-full cursor-pointer transform transition-transform duration-300 group-hover:scale-105">
-      <CosmicRingComponent />
-    </div>
-  </div>
-)}
+          {/* CosmicRingComponent */}
+          <div className="relative rounded-full cursor-pointer transform transition-transform duration-300 group-hover:scale-105">
+            <CosmicRingComponent />
+          </div>
+        </div>
+      )}
 
     </div>
   );
