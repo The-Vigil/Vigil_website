@@ -28,7 +28,13 @@ const FloatingChatWindow: FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null); // Reference for audio playback
-  // const [iconPosition, setIconPosition] = useState({ x: 0, y: 0 });
+  
+  const predefinedMessages = [
+    "Hi",
+    "Give me more details",
+    "What is your purpose?",
+    "Can you help me with property protection?"
+  ];
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -59,6 +65,10 @@ const FloatingChatWindow: FC = () => {
     setIsOpen(false); // Close the chat window
   };
 
+  const handlePredefinedMessageClick = async (message: string) => {
+    setInputText(message);
+    await handleSendMessage();
+  };
 
   const startRecording = async (): Promise<void> => {
     try {
@@ -364,6 +374,21 @@ const FloatingChatWindow: FC = () => {
               )}
               <div ref={messagesEndRef} />
             </div>
+
+               {/* Predefined options */}
+            {/* <div className="p-4 bg-gray-800 rounded-b-2xl">
+              <div className="flex flex-wrap space-x-2 space-y-2">
+                {predefinedMessages.map((msg, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePredefinedMessageClick(msg)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6 py-2 transition-all duration-300"
+                  >
+                    {msg}
+                  </button>
+                ))}
+              </div>
+            </div> */}
 
             {/* Input Area */}
             <div className="p-4 bg-gray-800 rounded-b-2xl border-t border-gray-700">

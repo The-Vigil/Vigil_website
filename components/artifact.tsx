@@ -210,7 +210,7 @@ const LandingPage: React.FC = () => {
             {/* Pre-headline Alert */}
             <div className="inline-block mb-6">
               <div className="px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 animate-pulse me-0 md:me-4">
-                Stop Squatters form occupying your property
+                Stop Squatters from occupying your property
               </div>
             </div>
 
