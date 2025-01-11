@@ -15,16 +15,28 @@ interface Particle {
   alpha?: number;
 }
 
-const CosmicRingComponent: React.FC = () => {
+interface CosmicRingComponentProps {
+  className?: string;
+}
+
+const CosmicRingComponent: React.FC<CosmicRingComponentProps> = ({ className }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const particlesRef = useRef<Particle[]>([]); // Store particles here
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [canvasSize, setCanvasSize] = useState<number>(100); // Track canvas size
+
+  // Function to determine the canvas size based on the screen width
+  const getCanvasSize = (): number => {
+    const screenWidth = window.innerWidth;
+    return screenWidth < 600 ? 60 : 100; // For mobile devices, reduce canvas size
+  };
 
   useEffect(() => {
     let ctx: CanvasRenderingContext2D | null = null;
     let time = 0;
 
+    // Initialize the canvas and set its size
     const initCanvas = (): boolean => {
       const canvas = canvasRef.current;
       if (!canvas) return false;
@@ -32,16 +44,17 @@ const CosmicRingComponent: React.FC = () => {
       ctx = canvas.getContext('2d');
       if (!ctx) return false;
 
-      const size = 100;
+      const size = getCanvasSize();
       canvas.width = size * 2;
       canvas.height = size * 2;
       canvas.style.width = `${size}px`;
       canvas.style.height = `${size}px`;
-      ctx.scale(2, 2);
+      ctx.scale(2, 2); // Double the scale for better resolution
 
       return true;
     };
 
+    // Create the particles for the cosmic ring and nebula
     const createParticles = (): void => {
       const canvas = canvasRef.current;
       if (!canvas || !ctx) return;
@@ -49,7 +62,7 @@ const CosmicRingComponent: React.FC = () => {
       const size = canvas.width / 2;
       const particles = []; // Local particles array
 
-      // Ring particles
+      // Create ring particles
       for (let i = 0; i < 200; i++) {
         const angle = (Math.PI * 2 * i) / 200;
         const radius = size * 0.35;
@@ -67,7 +80,7 @@ const CosmicRingComponent: React.FC = () => {
         });
       }
 
-      // Nebula particles
+      // Create nebula particles
       for (let i = 0; i < 80; i++) {
         const angle = Math.random() * Math.PI * 2;
         const radius = Math.random() * size * 0.4 + size * 0.2;
@@ -87,15 +100,17 @@ const CosmicRingComponent: React.FC = () => {
         });
       }
 
-      // Assign to ref
+      // Assign particles to the ref
       particlesRef.current = particles;
     };
 
+    // Animate the particles and the cosmic ring
     const animate = (): void => {
       if (!ctx || !canvasRef.current) return;
 
       const size = canvasRef.current.width / 2;
 
+      // Clear the canvas
       ctx.fillStyle = 'rgba(0, 0, 10, 0.1)';
       ctx.fillRect(0, 0, size, size);
 
@@ -203,16 +218,24 @@ const CosmicRingComponent: React.FC = () => {
       animate();
     }
 
+    // Add resize event listener to update canvas size
+    const handleResize = () => {
+      setCanvasSize(getCanvasSize());
+    };
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      window.removeEventListener('resize', handleResize);
     };
-  }, [isHovered]);
+  }, [isHovered, canvasSize]);
 
   return (
     <button
-      className="relative group"
+      className={`relative ${className || ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

@@ -32,7 +32,7 @@ const CosmicRing: React.FC = () => {
       ctx = canvas.getContext('2d');
       if (!ctx) return false;
 
-      const size = 30;
+      const size = 45;
       canvas.width = size * 2;
       canvas.height = size * 2;
       canvas.style.width = `${size}px`;
