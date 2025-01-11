@@ -210,14 +210,14 @@ const LandingPage: React.FC = () => {
             {/* Pre-headline Alert */}
             <div className="inline-block mb-6">
               <div className="px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 animate-pulse me-0 md:me-4">
-                Stop Squatters Before They Enter
+                Stop Squatters form occupying your property
               </div>
             </div>
 
             {/* Launch Badge */}
             <div className="inline-block mb-8">
               <div className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">
-                Launching December 2024 in NYC
+                Launching February 2025 in NYC
               </div>
             </div>
 
@@ -258,7 +258,7 @@ const LandingPage: React.FC = () => {
               <StatsCard
                 icon={<DollarSign className="w-6 h-6 text-green-400" />}
                 number="$50,000+"
-                label="Legal Costs Prevented"
+                label="Legal Costs Prevention"
               />
               <StatsCard
                 icon={<Clock className="w-6 h-6 text-blue-400" />}
