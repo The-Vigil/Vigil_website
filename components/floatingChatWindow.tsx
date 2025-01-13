@@ -28,13 +28,6 @@ const FloatingChatWindow: FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null); // Reference for audio playback
-  
-  const predefinedMessages = [
-    "Hi",
-    "Give me more details",
-    "What is your purpose?",
-    "Can you help me with property protection?"
-  ];
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -60,6 +53,39 @@ const FloatingChatWindow: FC = () => {
     Howler.stop(); // Stops all audio from Howler.js globally
   };
 
+// Updated function to work with `messages` array
+const generatePredefinedMessages = (messages: Message[]): string[] => {
+  // Find the most recent user message
+  const lastUserMessage = messages
+    .slice() // Make a copy to avoid modifying the original
+    .reverse() // Reverse to find the last message from the user
+    .find((message) => message.type === 'user');
+
+  // If no user message is found, provide default options
+  if (!lastUserMessage) {
+    return ["Hi", "What can you help me with?", "Tell me about yourself"];
+  }
+
+  // Extract the text from the last user message
+  const userInput = lastUserMessage.text.toLowerCase();
+
+  if (userInput.includes("details")) {
+    return ["Can you elaborate on your query?", "What specific details are you looking for?", "Would you like examples or more insights?"];
+  } else if (userInput.includes("purpose")) {
+    return ["What is your main goal?", "Can you explain your purpose in detail?", "What are you trying to achieve?"];
+  } else if (userInput.includes("help")) {
+    return ["What kind of help do you need?", "Can you describe your issue in detail?", "Let me know how I can assist you."];
+  } else if (userInput.includes("property protection")) {
+    return ["Are you looking for advice on securing a property?", "Can I guide you with property safety tips?", "What kind of protection do you need?"];
+  }
+
+  // Default fallback messages
+  return ["Can you clarify your question?", "How can I assist you?", "What information do you need?"];
+};
+  
+  const predefinedMessages = generatePredefinedMessages(messages);
+
+  
   const handleClose = () => {
     stopAudioPlayback(); // Stop any audio
     setIsOpen(false); // Close the chat window
@@ -319,7 +345,7 @@ const FloatingChatWindow: FC = () => {
         {isOpen && (
           <div className="chat-container w-96 max-h-[600px] rounded-2xl flex flex-col">
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 rounded-t-2xl flex items-center justify-between relative overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 rounded-t-2xl flex items-center justify-between relative overflow-hidden" style={{ minHeight: '5rem' }}>
               <div className="flex items-center space-x-3 z-10">
                 <CosmicRing />
                 {/* <Bot className="w-6 h-6 text-white wave-animation" /> */}
@@ -375,20 +401,20 @@ const FloatingChatWindow: FC = () => {
               <div ref={messagesEndRef} />
             </div>
 
-               {/* Predefined options */}
-            {/* <div className="p-4 bg-gray-800 rounded-b-2xl">
-              <div className="flex flex-wrap space-x-2 space-y-2">
+    {/* Predefined options */}
+    <div className="p-4 bg-gray-800 border-t border-gray-700">
+              <div className="flex flex-wrap gap-2">
                 {predefinedMessages.map((msg, index) => (
                   <button
                     key={index}
                     onClick={() => handlePredefinedMessageClick(msg)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6 py-2 transition-all duration-300"
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-2 transition-all duration-300"
                   >
                     {msg}
                   </button>
                 ))}
               </div>
-            </div> */}
+            </div>
 
             {/* Input Area */}
             <div className="p-4 bg-gray-800 rounded-b-2xl border-t border-gray-700">
