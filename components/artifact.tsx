@@ -233,12 +233,6 @@ const LandingPage: React.FC = () => {
               Secure Your Property Ownership Digitally.
             </p>
 
-            {/* Emergency Stats */}
-            {/* <div className="mb-12 text-red-400 text-lg">
-              <span className="font-semibold">NYC Alert:</span> Property owners
-              lose $50,000+ and 6+ months fighting squatters
-            </div> */}
-
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-20">
 
@@ -248,8 +242,6 @@ const LandingPage: React.FC = () => {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-
-
 
             </div>
 
