@@ -62,7 +62,7 @@ const VCPitchDeck = () => {
                                 "Significant financial losses and property damage"
                             ].map((text, index) => (
                                 <div
-                                    key={index}
+                                    key={`${index}-${text}`}
                                     className="flex items-center gap-4 bg-red-50 p-4 rounded-lg"
                                 >
                                     <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
@@ -79,12 +79,12 @@ const VCPitchDeck = () => {
                                 Financial Impact Per Case
                             </h3>
                             {[
-                                ["Legal Fees", "$30,000-$50,000", <DollarSign className="w-5 h-5 text-red-400" />],
-                                ["Property Damage", "$20,000-$40,000", <Building2 className="w-5 h-5 text-red-400" />],
-                                ["Lost Income", "$15,000-$25,000", <DollarSign className="w-5 h-5 text-red-400" />]
-                            ].map(([title, amount, icon], index) => (
+                                { title: "Legal Fees", amount: "$30,000-$50,000", icon: <DollarSign className="w-5 h-5 text-red-400" /> },
+                                { title: "Property Damage", amount: "$20,000-$40,000", icon: <Building2 className="w-5 h-5 text-red-400" /> },
+                                { title: "Lost Income", amount: "$15,000-$25,000", icon: <DollarSign className="w-5 h-5 text-red-400" /> }
+                            ].map(({ title, amount, icon }, index) => (
                                 <div
-                                    key={index}
+                                    key={`${index}-${title}`}
                                     className="bg-slate-800 p-4 rounded-lg flex items-center gap-4"
                                 >
                                     <div className="p-2 bg-slate-700 rounded-lg">{icon}</div>
@@ -95,6 +95,7 @@ const VCPitchDeck = () => {
                                 </div>
                             ))}
                         </div>
+
                     </div>
 
                     {/* Total Cost Summary */}
@@ -233,7 +234,7 @@ const VCPitchDeck = () => {
                                 bg: "bg-purple-50"
                             }
                         ].map((item, index) => (
-                            <div key={index} className={`${item.bg} p-6 rounded-lg space-y-4`}>
+                            <div key={`${index}-${item}`} className={`${item.bg} p-6 rounded-lg space-y-4`}>
                                 <div className={`w-12 h-12 ${item.color} rounded-lg flex items-center justify-center`}>
                                     {item.icon}
                                 </div>
@@ -272,7 +273,7 @@ const VCPitchDeck = () => {
                                     "Maintain rental income stream",
                                     "Peace of mind with instant verification"
                                 ].map((benefit, index) => (
-                                    <div key={index} className="flex items-center gap-3 bg-slate-800 p-4 rounded-lg">
+                                    <div key={`${index}-${benefit}`} className="flex items-center gap-3 bg-slate-800 p-4 rounded-lg">
                                         <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                                         <p className="text-gray-200">{benefit}</p>
                                     </div>
@@ -294,7 +295,7 @@ const VCPitchDeck = () => {
                                     "Clear authority to act",
                                     "Streamlined reporting process"
                                 ].map((benefit, index) => (
-                                    <div key={index} className="flex items-center gap-3 bg-slate-800 p-4 rounded-lg">
+                                    <div key={`${index}-${benefit}`} className="flex items-center gap-3 bg-slate-800 p-4 rounded-lg">
                                         <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                                         <p className="text-gray-200">{benefit}</p>
                                     </div>
@@ -554,7 +555,7 @@ const VCPitchDeck = () => {
                         <h3 className="text-xl font-bold mb-4">Ready to Transform Property Protection?</h3>
                         <div className="space-y-2">
                             <p className="text-blue-400">Contact: demo@vigil.com | (555) 123-4567</p>
-                            <p className="text-gray-400">Let's Protect Property Rights Together</p>
+                            <p className="text-gray-400">Let&apos;s Protect Property Rights Together</p>
                         </div>
                     </div>
                 </div>
