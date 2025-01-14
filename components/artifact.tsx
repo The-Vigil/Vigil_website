@@ -190,13 +190,19 @@ const LandingPage: React.FC = () => {
           >
             Contact Us
           </Link>
-          <a
+          <Link
+            href="/pitch-deck"
+            className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block md:inline-block mx-auto md:mx-0 mb-5 md:mb-0"
+          >
+            Pitch Deck
+          </Link>
+          {/* <a
             href="/Pitch_deck_vigil.pdf"
             download="Pitch_deck_vigil.pdf" // Explicitly set the file name for download
             className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block md:inline-block mx-auto md:mx-0"
           >
             Pitch Deck
-          </a>
+          </a> */}
         </div>
         </div>
       </nav>
