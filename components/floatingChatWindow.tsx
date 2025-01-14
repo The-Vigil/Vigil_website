@@ -65,7 +65,7 @@ const FloatingChatWindow: FC = () => {
 
     // If no user message is found, provide default options
     if (!lastUserMessage) {
-      return ["Hi", "What can you help me with?", "Tell me about yourself"];
+      return ["Tell me about Vigil.", "How can I verify my property?", "How can I add my property?"];
     }
 
     // Extract the text from the last user message

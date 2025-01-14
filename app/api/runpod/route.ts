@@ -35,6 +35,7 @@ async function pollForCompletion(jobId: string): Promise<RunPodResponse> {
           ...(httpsAgent && { agent: httpsAgent }),
         }
       );
+      console.log("respose ", response);
 
       if (!response.ok) {
         throw new Error(`Status check failed with status ${response.status}`);
@@ -72,6 +73,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({ input: { type, text, audio } }),
       ...(httpsAgent && { agent: httpsAgent }),
     });
+    console.log("respose2 ", response);
 
     if (!response.ok) {
      const errorDetails = (await response.json()) as { error?: { message?: string } };
