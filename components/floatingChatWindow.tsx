@@ -254,6 +254,7 @@ const FloatingChatWindow: FC = () => {
   };
 
   const callRunPodEndpoint = async (payload: Record<string, unknown>): Promise<RunPodResponse> => {
+    console.log('Sending API Request:', payload);
     try {
       const response = await fetch('/api/runpod', {
         method: 'POST',
