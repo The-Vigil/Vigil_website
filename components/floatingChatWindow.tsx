@@ -276,6 +276,7 @@ const FloatingChatWindow: FC = () => {
   };
 
   const handleSendMessage = async (): Promise<void> => {
+    setShowPredefinedMessages(false)
     if (!inputText.trim()) return;
 
     const userMessage = inputText.trim();
