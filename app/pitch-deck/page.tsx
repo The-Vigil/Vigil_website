@@ -7,30 +7,36 @@ const VCPitchDeck = () => {
         // <div className="w-full max-w-5xl space-y-12 p-8">
         <div className="w-full">
             {/* Title Slide */}
-            <Card className="p-16 bg-slate-900 text-white">
-                <div className="space-y-8 text-center">
-                    <h1 className="text-6xl font-bold">VIGIL</h1>
-                    <div className="h-px w-32 mx-auto bg-blue-400"></div>
-                    <div className="space-y-4">
-                        <p className="text-3xl font-semibold text-blue-400">Transforming Property Protection</p>
-                        <p className="text-xl text-gray-300">Instant Ownership Verification for Law Enforcement</p>
+            <Card className="p-8 sm:p-16 bg-slate-900 text-white">
+                <div className="space-y-6 sm:space-y-8 text-center">
+                    {/* Title Section */}
+                    <h1 className="text-4xl sm:text-6xl font-bold">VIGIL</h1>
+                    <div className="h-px w-20 sm:w-32 mx-auto bg-blue-400"></div>
+
+                    {/* Subtitle Section */}
+                    <div className="space-y-2 sm:space-y-4">
+                        <p className="text-2xl sm:text-3xl font-semibold text-blue-400">Transforming Property Protection</p>
+                        <p className="text-lg sm:text-xl text-gray-300">Instant Ownership Verification for Law Enforcement</p>
                     </div>
-                    <div className="grid grid-cols-3 gap-8 pt-8 border-t border-gray-700">
+
+                    {/* Metrics Section */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 pt-6 sm:pt-8 border-t border-gray-700">
                         <div>
-                            <p className="text-4xl font-bold text-red-400">6-8</p>
+                            <p className="text-3xl sm:text-4xl font-bold text-red-400">6-8</p>
                             <p className="text-gray-300">Months of Legal Battle</p>
                         </div>
                         <div>
-                            <p className="text-4xl font-bold text-red-400">$50K+</p>
+                            <p className="text-3xl sm:text-4xl font-bold text-red-400">$50K+</p>
                             <p className="text-gray-300">Legal Fees Per Case</p>
                         </div>
                         <div>
-                            <p className="text-4xl font-bold text-green-400">60</p>
+                            <p className="text-3xl sm:text-4xl font-bold text-green-400">60</p>
                             <p className="text-gray-300">Second Solution</p>
                         </div>
                     </div>
                 </div>
             </Card>
+
 
             {/* Problem Statement */}
             <Card className="p-6 sm:p-12 bg-white">
