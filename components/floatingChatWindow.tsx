@@ -406,7 +406,7 @@ const FloatingChatWindow: FC = () => {
             {/* Predefined options */}
             <div className="p-4 bg-gray-800 border-t border-gray-700">
               <div className="flex justify-between items-center">
-                <h4 className="text-gray-300 text-sm font-medium">Quick Replies</h4>
+                <h4 className="text-gray-300 text-sm font-medium">  {showPredefinedMessages ? "Suggestions" : "Need Suggestions?"}</h4>
                 <button
                   onClick={() => setShowPredefinedMessages(!showPredefinedMessages)}
                   className="text-blue-500 hover:text-blue-400 text-xs transition-all duration-300"
