@@ -1,8 +1,8 @@
 "use client";
-
+import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Shield } from 'lucide-react';
+import { Shield, MenuIcon, X } from 'lucide-react';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -146,8 +146,56 @@ Additional Comments: ${formData.comments || "None"}
     router.push("/confirmation");
   };
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-black text-gray-100">
+    <div className="entire-body">
+      <nav className="fixed w-full z-50 border-b border-white/10 bg-black/95">
+        <div className="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
+        {/* Logo Section */}
+          <div className="flex items-center gap-2">
+              <Shield className="w-8 h-8 text-blue-500" />
+              <span className="text-2xl font-bold text-white">VIGIL</span>
+          </div>
+          <div className="md:hidden flex items-center">
+              <button
+                  className="text-white focus:outline-none"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+              {isMenuOpen ? (
+              <X className="text-xl" /> // Close Icon\
+              ) : (
+              <MenuIcon className="text-xl"/> // Hamburger Icon
+              )}
+              </button>
+          </div>
+
+        {/* Buttons Section */}
+          <div className={`md:flex gap-4 ${isMenuOpen ? "block bg-black/95 px-6 py-6" : "hidden"} absolute md:static top-20 left-0 w-full md:w-auto bg-black/95 md:bg-transparent text-center`}>
+          <Link
+              href="/pitch-deck"
+              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block md:inline-block mx-auto md:mx-0 mb-5 md:mb-0"
+          >
+              Pitch Deck
+          </Link>
+          <Link
+              href="/"
+              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block md:inline-block mx-auto md:mx-0 mb-5 md:mb-0"
+          >
+              Go Home
+          </Link>
+          {/* <a
+              href="/Pitch_deck_vigil.pdf"
+              download="Pitch_deck_vigil.pdf" // Explicitly set the file name for download
+              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block md:inline-block mx-auto md:mx-0"
+          >
+              Pitch Deck
+          </a> */}
+          </div>
+        </div>
+      </nav>
+
+    <div className="min-h-screen bg-black text-gray-100 pt-32 pb-20 relative overflow-hidden">
       <div className="max-w-2xl mx-auto p-6">
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
@@ -279,6 +327,7 @@ Additional Comments: ${formData.comments || "None"}
           </button>
         </form>
       </div>
+    </div>
     </div>
   );
 };
