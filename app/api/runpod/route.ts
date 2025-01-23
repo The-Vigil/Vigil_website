@@ -15,6 +15,7 @@ interface RunPodResponse {
   error?: string;
 }
 
+
 // Configure HTTPS Agent to bypass SSL for development
 const httpsAgent = process.env.NODE_ENV === 'development'
   ? new https.Agent({ rejectUnauthorized: false })
