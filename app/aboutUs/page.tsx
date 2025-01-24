@@ -47,7 +47,7 @@ const AboutUs: React.FC = () => {
               Our Vision
             </h2>
             <p className="text-lg leading-relaxed">
-              To be the world's leading tech solutions provider, renowned for innovation, quality, and integrity, transforming the property security landscape.
+              To be the world&apos;s leading tech solutions provider, renowned for innovation, quality, and integrity, transforming the property security landscape.
             </p>
           </div>
         </div>
